@@ -1,6 +1,6 @@
 // ÄNDRA DETTA VÄRDE VID VARJE UPPDATERING AV TAXONOMIN!
 // T.ex. 'oltaxonomi-cache-v2', 'oltaxonomi-cache-v3'
-const CACHE_NAME = 'oltaxonomi-cache-v1'; // Kom ihåg att bumpa detta!
+const CACHE_NAME = 'oltaxonomi-cache-v2'; // Kom ihåg att bumpa detta!
 const urlsToCache = [
   // Alla sökvägar måste vara absoluta från roten av GitHub Pages-sidan
   '/sensotax-pwa/', 
