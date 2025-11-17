@@ -20,15 +20,68 @@
     <style>
         /* Base styling */
         body { font-family: sans-serif; margin: 0; padding: 20px; }
+        
+        /* Level 1 Styling */
         .level-1-category { 
-            margin-bottom: 10px; 
+            margin-bottom: 12px; 
             padding: 10px; 
             border-radius: 5px; 
-            color: white; /* Ensures text is visible against coloured background */
+            color: white;
+            cursor: pointer; /* Indicates Level 1 is clickable */
         }
         .level-1-title { 
+            font-size: 1.2em;
             font-weight: bold; 
+            display: flex;
+            align-items: center;
         }
+        .level-1-icon {
+            margin-right: 10px;
+            font-size: 1.5em; /* Emoji size */
+        }
+
+        /* Level 2 Styling (Subcategories) */
+        .level-2-container {
+            background-color: rgba(255, 255, 255, 0.15); /* Slight overlay */
+            padding: 10px 0 0 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+        }
+        .level-2-category {
+            margin-bottom: 5px;
+        }
+        .level-2-title {
+            font-weight: bold;
+            cursor: pointer;
+            padding: 5px;
+            display: block;
+            border-radius: 3px;
+        }
+        .level-2-title:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        /* Level 3 Styling (Terms) */
+        .level-3-terms {
+            list-style: none;
+            padding: 5px 0 5px 20px;
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 3px;
+        }
+        .level-3-terms li {
+            padding: 2px 8px;
+            margin-right: 8px;
+            margin-bottom: 5px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: white;
+            font-size: 0.9em;
+        }
+        /* Hidden classes for toggling */
+        .hidden { display: none; }
     </style>
 </head>
 <body>
@@ -39,6 +92,17 @@
         // Filename for the taxonomy data
         const TAXONOMY_FILE = 'taxonomy.yaml';
         const container = document.getElementById('taxonomy-container');
+
+        // Function to toggle visibility of nested content (Level 2 and Level 3)
+        function toggleCategory(element) {
+            // Target the next sibling element (the container for the nested list/div)
+            const content = element.nextElementSibling;
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+            } else {
+                content.classList.add('hidden');
+            }
+        }
 
         // Function to parse the YAML data using js-yaml library
         function parseYamlData(yamlText) {
@@ -69,19 +133,71 @@
                 const level1Div = document.createElement('div');
                 level1Div.className = 'level-1-category';
 
-                // CRITICAL CHANGE: Using British English 'colour' key
+                // Apply colour (BRITISH ENGLISH: 'colour')
                 if (level1.colour) {
                     level1Div.style.backgroundColor = level1.colour;
                 } else {
-                     // CRITICAL CHANGE: Using British English 'colour' key in warning
                      console.warn(`Warning: No colour defined for ${level1.name || 'unknown category'}`);
                 }
                 
-                const title = document.createElement('div');
-                title.className = 'level-1-title';
-                title.textContent = level1.name || 'Unknown category';
+                // 1. Level 1 Title (Including Icon)
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'level-1-title';
                 
-                level1Div.appendChild(title);
+                // Render Icon
+                const iconSpan = document.createElement('span');
+                iconSpan.className = 'level-1-icon';
+                iconSpan.textContent = level1.icon || '';
+                titleDiv.appendChild(iconSpan);
+
+                // Render Name
+                titleDiv.append(level1.name || 'Unknown category');
+                
+                // Add click handler to toggle Level 2 visibility
+                titleDiv.onclick = () => toggleCategory(titleDiv);
+                level1Div.appendChild(titleDiv);
+
+                // 2. Level 2 Container (Categories)
+                const level2Container = document.createElement('div');
+                level2Container.className = 'level-2-container';
+                level2Container.classList.add('hidden'); // Hidden by default
+
+                // Requirement: Category B (ID: B) should be expanded by default
+                if (level1.id === 'B') {
+                    level2Container.classList.remove('hidden');
+                }
+
+                if (level1.categories && Array.isArray(level1.categories)) {
+                    level1.categories.forEach(level2 => {
+                        const level2Div = document.createElement('div');
+                        level2Div.className = 'level-2-category';
+
+                        // 3. Level 2 Title (Clickable)
+                        const level2Title = document.createElement('div');
+                        level2Title.className = 'level-2-title';
+                        level2Title.textContent = `+ ${level2.name || 'Unnamed Subcategory'}`;
+                        level2Title.onclick = () => toggleCategory(level2Title);
+                        level2Div.appendChild(level2Title);
+
+                        // 4. Level 3 Terms (Hidden list)
+                        const termsList = document.createElement('ul');
+                        termsList.className = 'level-3-terms';
+                        termsList.classList.add('hidden'); // Hidden by default
+
+                        if (level2.terms && Array.isArray(level2.terms)) {
+                            level2.terms.forEach(term => {
+                                const listItem = document.createElement('li');
+                                listItem.textContent = term;
+                                termsList.appendChild(listItem);
+                            });
+                        }
+                        
+                        level2Div.appendChild(termsList);
+                        level2Container.appendChild(level2Div);
+                    });
+                }
+
+                level1Div.appendChild(level2Container);
                 container.appendChild(level1Div);
             });
         }
@@ -113,7 +229,6 @@
         // --- PWA Service Worker Registration ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                // IMPORTANT: Adjust the path if your app is not hosted under /sensotax-pwa/
                 navigator.serviceWorker.register('/sensotax-pwa/sw.js')
                     .then(registration => {
                         console.log('Service Worker registered successfully with scope:', registration.scope);
