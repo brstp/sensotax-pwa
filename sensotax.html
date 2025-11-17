@@ -18,10 +18,17 @@
     <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
 
     <style>
-        /* [Your CSS Styles Here] */
+        /* Base styling */
         body { font-family: sans-serif; margin: 0; padding: 20px; }
-        .level-1-category { margin-bottom: 10px; padding: 10px; border-radius: 5px; color: white; }
-        .level-1-title { font-weight: bold; }
+        .level-1-category { 
+            margin-bottom: 10px; 
+            padding: 10px; 
+            border-radius: 5px; 
+            color: white; /* Ensures text is visible against colored background */
+        }
+        .level-1-title { 
+            font-weight: bold; 
+        }
     </style>
 </head>
 <body>
@@ -52,7 +59,7 @@
                 return;
             }
 
-            container.innerHTML = ''; // Clear 'Loading data...'
+            container.innerHTML = ''; // Clear 'Loading data...' status
 
             if (data.length === 0) {
                  container.innerHTML = '<p>Taxonomy loaded successfully, but the category list is empty.</p>';
@@ -63,17 +70,17 @@
                 const level1Div = document.createElement('div');
                 level1Div.className = 'level-1-category';
 
-                // Check for the color key (Fixes the rendering issue if key exists)
+                // Check for the color key and apply the background color (Fixes the original problem)
                 if (level1.color) {
                     level1Div.style.backgroundColor = level1.color;
                 } else {
-                     // The console warning helps verify that the YAML file is fixed.
+                     // This warning helps the developer verify the 'color' key in taxonomy.yaml
                      console.warn(`Warning: No color defined for ${level1.name || 'unknown category'}`);
                 }
                 
                 const title = document.createElement('div');
                 title.className = 'level-1-title';
-                title.textContent = level1.name || 'Unknown category';
+                title.textContent = level1.name || 'Unknown category'; // Checks for 'name' key
                 
                 level1Div.appendChild(title);
                 container.appendChild(level1Div);
@@ -103,6 +110,23 @@
 
         // Start the data loading process
         loadData();
+
+        // --- PWA Service Worker Registration ---
+        // Register the Service Worker if supported by the browser
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                // IMPORTANT: Adjust the path if your app is not hosted under /sensotax-pwa/
+                navigator.serviceWorker.register('/sensotax-pwa/sw.js')
+                    .then(registration => {
+                        console.log('Service Worker registered successfully with scope:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.error('Service Worker registration failed:', error);
+                    });
+            });
+        }
+        // --- End Service Worker Registration ---
+
     </script>
 </body>
 </html>
