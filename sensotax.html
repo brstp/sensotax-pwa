@@ -96,7 +96,7 @@ function parseYAML(yaml) {
     let currentRef = output;
 
     lines.forEach(line => {
-        line = line.replace(/#.*$/, '').trimEnd();
+        // line = line.replace(/#.*$/, '').trimEnd();
         if (!line) return;
 
         const indent = line.search(/\S/);
@@ -116,9 +116,16 @@ function parseYAML(yaml) {
             const content = trimmedLine.substring(1).trimStart();
             const parts = content.match(/^(.+?):\s*(.*)/);
             
-            if (parts) { // Object start (e.g., - id: A)
-                key = parts[1].trim();
-                value = parts[2].trim();
+            if (parts) {
+                let key = parts[1].trim();
+                let value = parts[2].trim();
+                
+                // Nytt steg: Städa värdet från eventuella kommentarer
+                if (value.includes('#')) {
+                    value = value.substring(0, value.indexOf('#')).trim();
+                }
+                
+                if (value === '') { // Start of new object or list
                 let newObj = {};
                 
                 if (Array.isArray(currentRef)) {
