@@ -1,12 +1,13 @@
-const CACHE_NAME = 'oltaxonomi-cache-v14'; // Ny version!
+// Öka till v15 (Final fix attempt)
+const CACHE_NAME = 'oltaxonomi-cache-v15'; 
 
 const urlsToCache = [
   './', 
   'sensotax.html',
   'manifest.webmanifest',
-  // Återinför ikonerna för caching:
-  'icon-192.png', 
-  'icon-512.png'
+  // OBS: Vi använder nu absoluta sökvägar för ikonerna i cachen.
+  '/sensotax-pwa/icon-192.png', 
+  '/sensotax-pwa/icon-512.png'
 ];
 
 // Installation: Cache:a filer
