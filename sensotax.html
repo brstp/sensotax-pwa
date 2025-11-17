@@ -179,8 +179,13 @@ async function loadAndRender() {
 
         // 2. Parse YAML into JavaScript object
         const rawData = parseYAML(yamlText);
-        const taxonomyData = rawData.taxonomy || rawData;
+        let taxonomyData = rawData.taxonomy;
 
+        if (!Array.isArray(taxonomyData)) {
+            // Om 'taxonomy' inte finns (t.ex. filen börjar direkt med listan), använd rådata.
+            taxonomyData = rawData; 
+        }
+        
         // 3. Render the interface
         renderTaxonomy(taxonomyData);
         
