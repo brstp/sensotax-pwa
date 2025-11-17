@@ -98,9 +98,9 @@
         const TAXONOMY_FILE = 'taxonomy.yaml';
         const container = document.getElementById('taxonomy-container');
         
-        // --- START FÄRGHANTERING HSL ---
+        // --- START COLOUR HANDLING HSL ---
 
-        // Konverterar HEX till HSL [h, s, l]
+        // Converts HEX to HSL [h, s, l]
         function hexToHsl(hex) {
             let r = 0, g = 0, b = 0;
             if (hex.length === 4) {
@@ -117,7 +117,7 @@
             let h, s, l = (max + min) / 2;
 
             if (max === min) {
-                h = s = 0; // achromatic
+                h = s = 0; 
             } else {
                 let d = max - min;
                 s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
@@ -131,12 +131,12 @@
             return [h * 360, s * 100, l * 100];
         }
 
-        // Konverterar HSL [h, s, l] till HEX
+        // Converts HSL [h, s, l] to HEX
         function hslToHex(h, s, l) {
             h /= 360; s /= 100; l /= 100;
             let r, g, b;
             if (s === 0) {
-                r = g = b = l; // achromatic
+                r = g = b = l; 
             } else {
                 const hue2rgb = (p, q, t) => {
                     if (t < 0) t += 1;
@@ -160,22 +160,22 @@
         }
 
         /**
-         * Ljusar upp en HEX-kod till en given ljushetsnivå (L).
-         * @param {string} hex - Nivå 1 färg (#RRGGBB).
-         * @param {number} targetL - Önskad ljushet (0-100).
-         * @returns {string} Ljusare HEX-kod.
+         * Lightens a HEX code to a specified Lightness level (L).
+         * @param {string} hex - Level 1 colour (#RRGGBB).
+         * @param {number} targetL - Desired lightness (0-100).
+         * @returns {string} Lighter HEX code.
          */
         function lightenColour(hex, targetL) {
             try {
                 let [h, s, l] = hexToHsl(hex);
-                // Bibehåll befintlig nyans (h) och mättnad (s), men sätt ny ljushet (l)
+                // Maintain existing hue (h) and saturation (s), but set new lightness (l)
                 return hslToHex(h, s, targetL);
             } catch (e) {
                 console.warn(`Colour conversion failed for ${hex}. Defaulting to white.`, e);
                 return '#FFFFFF'; // Fallback
             }
         }
-        // --- SLUT FÄRGHANTERING HSL ---
+        // --- END COLOUR HANDLING HSL ---
 
 
         function toggleCategory(element) {
@@ -199,6 +199,9 @@
 
         // Funktion för att rendera taxonomin
         function renderTaxonomy(data) {
+            
+            // ... (Initial checks remain unchanged) ...
+
             if (!data || !Array.isArray(data)) {
                 container.innerHTML = '<p>Taxonomy data is empty or incorrectly formatted (expected a top-level array).</p>';
                 return;
@@ -214,11 +217,11 @@
             data.forEach(level1 => {
                 const baseColour = level1.colour;
 
-                // BERÄKNA LJUSA FÄRGER FÖR KONTRAST (L>90)
-                const L2_BG_COLOUR = lightenColour(baseColour, 90);  // Ljusast för Level 2-behållaren
-                const L3_BG_COLOUR = lightenColour(baseColour, 95);  // Ljusare för Level 3-listan
-                const L3_ITEM_COLOUR = lightenColour(baseColour, 98); // Nästan vit för term-behållaren
-                const L3_BORDER_COLOUR = lightenColour(baseColour, 85); // Mörkare för avdelare
+                // BERÄKNA LJUSA FÄRGER FÖR KONTRAST OCH ESTETIK (NYA HÖGRE L-VÄRDEN)
+                const L2_BG_COLOUR = lightenColour(baseColour, 95);  // Mycket ljust (tidigare 90)
+                const L3_BG_COLOUR = lightenColour(baseColour, 97);  // Nästan rent vitt (tidigare 95)
+                const L3_ITEM_COLOUR = lightenColour(baseColour, 99); // Extremt ljust (tidigare 98)
+                const L3_BORDER_COLOUR = lightenColour(baseColour, 90); // Tydlig men ljus avdelare (tidigare 85)
 
                 const level1Div = document.createElement('div');
                 level1Div.className = 'level-1-category';
@@ -246,7 +249,7 @@
                 // 2. Level 2 Container (Categories)
                 const level2Container = document.createElement('div');
                 level2Container.className = 'level-2-container';
-                level2Container.style.backgroundColor = L2_BG_COLOUR; // APPLICERAR LJUS FÄRG HÄR
+                level2Container.style.backgroundColor = L2_BG_COLOUR; // APPLICERAR LJUS FÄRG HÄR (L=95)
 
                 if (level1.categories && Array.isArray(level1.categories)) {
                     level1.categories.forEach(level2 => {
@@ -259,7 +262,8 @@
                         level2Title.textContent = `+ ${level2.name || 'Unnamed Subcategory'}`;
                         level2Title.onclick = () => toggleCategory(level2Title);
                         // APPLICERAR HOVER-FÄRG: Lätt mörkare version av Level 2 BG
-                        level2Title.onmouseover = () => level2Title.style.backgroundColor = lightenColour(baseColour, 88);
+                        const L2_HOVER_COLOUR = lightenColour(baseColour, 93); // Två steg mörkare än L2 BG
+                        level2Title.onmouseover = () => level2Title.style.backgroundColor = L2_HOVER_COLOUR;
                         level2Title.onmouseout = () => level2Title.style.backgroundColor = 'transparent';
                         level2Div.appendChild(level2Title);
 
@@ -267,7 +271,7 @@
                         const termsList = document.createElement('ul');
                         termsList.className = 'level-3-terms';
                         termsList.classList.add('hidden'); 
-                        termsList.style.backgroundColor = L3_BG_COLOUR; // APPLICERAR LJUS FÄRG HÄR
+                        termsList.style.backgroundColor = L3_BG_COLOUR; // APPLICERAR LJUS FÄRG HÄR (L=97)
 
                         if (level2.terms && Array.isArray(level2.terms)) {
                             level2.terms.forEach(term => {
@@ -276,8 +280,8 @@
                                 const termItem = document.createElement('div');
                                 termItem.className = 'level-3-item';
                                 termItem.textContent = term;
-                                termItem.style.backgroundColor = L3_ITEM_COLOUR; // APPLICERAR LJUS FÄRG HÄR
-                                termItem.style.borderBottom = `1px solid ${L3_BORDER_COLOUR}`; // APPLICERAR FÄRGAD BORDER
+                                termItem.style.backgroundColor = L3_ITEM_COLOUR; // APPLICERAR LJUS FÄRG HÄR (L=99)
+                                termItem.style.borderBottom = `1px solid ${L3_BORDER_COLOUR}`; // APPLICERAR FÄRGAD BORDER (L=90)
 
                                 listItem.appendChild(termItem);
                                 termsList.appendChild(listItem);
