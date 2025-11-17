@@ -1,0 +1,277 @@
+#
+# Sensotax Taxonomi: Värderingsneutral sensorisk databas
+# Format: YAML (för enkel redigering och versionshantering)
+#
+taxonomi:
+  - id: A
+    namn: Fruktig & Ester-relaterad
+    fokus: Estrar, Citrus, Bär, Tropisk frukt och Oxidationstoner.
+    color: "#FF5733" # Orange/Röd för frukt
+    icon: "🍊"
+    kategorier:
+      - namn: Citrus
+        termer:
+          - Grapefrukt
+          - Apelsin
+          - Citron
+          - Lime
+          - Mandarin
+          - Bergamott
+          - Pompelmus
+          - Citronskal
+      - namn: Stenfrukt & Kärnfrukt
+        termer:
+          - Persika
+          - Aprikos
+          - Plommon
+          - Nektarin
+          - Körsbär
+          - Äpple
+          - Päron
+          - Banan
+          - Rosé
+      - namn: Tropisk & Exotisk Frukt
+        termer:
+          - Mango
+          - Passionsfrukt
+          - Ananas
+          - Guava
+          - Papaya
+          - Litchi
+          - Kiwi
+          - Kokosnöt
+          - Vattenmelon
+          - Honungsmelon
+          - Cantaloupe-melon
+      - namn: Bär & Vinbär
+        termer:
+          - Svarta vinbär
+          - Blåbär
+          - Hallon
+          - Björnbär
+          - Jordgubbe
+          - Röda vinbär
+          - Krusbär
+      - namn: Torkad & Mörk Frukt
+        termer:
+          - Russin
+          - Torkad frukt
+      - namn: Åldring & Oxidationstoner
+        termer:
+          - Sherry/Vinös
+          - Oxidativ
+          - Kartong/Våt papp
+          - Grön
+
+  - id: B
+    namn: Kryddig, Floral & Vegetal
+    fokus: Fenoler, Örter, Gräsighet, Sulfider och Kryddor.
+    color: "#32CD32" # Grön för vegetala toner
+    icon: "🌿"
+    kategorier:
+      - namn: Kryddig
+        termer:
+          - Peppar
+          - Kryddnejlika
+          - Anis
+          - Muskot
+          - Ingefära
+          - Lakrits
+          - Enbär
+      - namn: Floral/Blommig
+        termer:
+          - Ros
+          - Geranium
+          - Syren
+          - Jasmin
+          - Fläder
+          - Kamomill
+          - Lavendel
+          - Apelsinblom
+      - namn: Örtig/Aromatisk
+        termer:
+          - Dill
+          - Timjan
+          - Basilika
+          - Rosmarin
+          - Mynta
+          - Grönmynta
+          - Grön te
+          - Svart te
+          - Mejram
+      - namn: Grön & Vegetal
+        termer:
+          - Gräsig
+          - Nyklippt gräs
+          - Lök
+          - Vitlök
+          - Selleri
+          - Nässla
+          - Gurka
+          - DMS
+          - Kokt kål
+          - Majs
+      - namn: Ofräsch Vegetal
+        termer:
+          - Ruttet ägg
+          - Skunkig
+          - Catty
+
+  - id: C
+    namn: Spannmål & Sötma
+    fokus: Malt, Karamell, Enkel Sötma, Nötter och Diacetyl.
+    color: "#DAA520" # Gyllengul/Halmfärg
+    icon: "🍞"
+    kategorier:
+      - namn: Basmalt & Brödig
+        termer:
+          - Maltig
+          - Korn
+          - Brödig
+          - Degig
+          - Cracker
+          - Varm
+          - Kaka/Kex
+          - Brödskorpa
+      - namn: Karamell & Sirap
+        termer:
+          - Karamell
+          - Kola
+          - Toffee
+          - Knäck
+          - Sirap
+          - Farinsocker
+          - Melass
+          - Fudge
+          - Bränt socker
+          - Karamelliserad lök
+      - namn: Enkel Sötma & Nöt
+        termer:
+          - Lätt sötma
+          - Honung
+          - Socker
+          - Vanilj
+          - Mandel/Marsipan
+          - Hasselnöt
+          - Valnöt
+          - Jordnöt
+          - Oljig
+      - namn: Torr & Rå
+        termer:
+          - Torr
+          - Hö
+          - Halm
+          - Kornig
+          - Mjölig
+      - namn: Smörig
+        termer:
+          - Smörig
+          - Popcorn
+          - Härskt/Smörigt
+
+  - id: D
+    namn: Rostad & Bränd
+    fokus: Rostade malter, Kaffe, Choklad och Rökighet.
+    color: "#654321" # Mörkbrun för rostat
+    icon: "☕"
+    kategorier:
+      - namn: Kaffe & Choklad
+        termer:
+          - Kaffe
+          - Espresso
+          - Choklad
+          - Mörk choklad
+          - Mjölkchoklad
+          - Kakao
+          - Nygjord kaffe
+      - namn: Bränd & Sotig
+        termer:
+          - Bränd
+          - Sotig
+          - Bitter Choklad
+          - Bränd sockervadd
+      - namn: Rökig
+        termer:
+          - Röksmak
+          - Torvig
+          - Lätt Rök
+          - Skinka/Bacon
+
+  - id: E
+    namn: Komplex, Oorganisk och Fenolisk
+    fokus: Kåda, Trä, Lösningsmedel, Infektioner och Mineraler.
+    color: "#808080" # Grå/Skogsgrön för komplexitet
+    icon: "🌲"
+    kategorier:
+      - namn: Kåda & Tall
+        termer:
+          - Kådig
+          - Tall
+          - Cederträ
+      - namn: Jordig
+        termer:
+          - Jordig
+          - Mossa/Svamp
+          - Doff
+          - Smutsig/Jordkällare
+      - namn: Trä & Alkohol
+        termer:
+          - Träig
+          - Tobak
+          - Läder
+          - Rökelse
+          - Kognak/Barrique
+          - Värmande/Spritig
+          - Lösningsmedel
+          - Plåster/Medicinsk
+          - Fenolisk
+      - namn: Infektion & Syra
+        termer:
+          - Vinäger/Sur
+          - Sur/Mjölksyra
+          - Hästtäcke/Stall
+          - Ostig
+          - Klor/Klorfenol
+      - namn: Mineral & Oorganisk
+        termer:
+          - Metallisk
+          - Blodig
+          - Kemisk
+          - Tändsticka/Rök
+
+  - id: G
+    namn: Munkänsla, Textur & Eftersmak
+    fokus: Taktila, termiska och grundsmaker.
+    color: "#2a6fdb" # Blå för känsla/vatten
+    icon: "💧"
+    kategorier:
+      - namn: Taktil Känsla (Kropp)
+        termer:
+          - Fyllig/Tät
+          - Medium fyllighet
+          - Lätt/Vattnig
+          - Silkeslen/Mjuk
+          - Oljig/Fet
+          - Sträv
+      - namn: Kolsyra & Skum
+        termer:
+          - Kraftig/Högt kolsyrad
+          - Låg/Platt
+          - Mjuk/Pärlande
+          - Skummig/Mousserande
+          - Tunn/Försvinnande skum
+      - namn: Termisk & Alkohol
+        termer:
+          - Kylande
+          - Stickande
+      - namn: Grundsmaker
+        termer:
+          - Besk
+          - Söt
+          - Salt
+      - namn: Eftersmak
+        termer:
+          - Kvardröjande
+          - Ren/Kort
+          - Klibbig/Seg
+          - Beläggande
