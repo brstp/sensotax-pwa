@@ -6,12 +6,12 @@
   // ... andra inställningar
   "icons": [
     {
-      "src": "/sensotax-pwa/ikon/icon-192.png", // Ändrad sökväg
+      "src": "/sensotax-pwa/icon-192.png", // Ändrad sökväg
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/sensotax-pwa/ikon/icon-512.png", // Ändrad sökväg
+      "src": "/sensotax-pwa/icon-512.png", // Ändrad sökväg
       "sizes": "512x512",
       "type": "image/png"
     }

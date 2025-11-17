@@ -6,8 +6,8 @@ const urlsToCache = [
   'sensotax.html',
   'manifest.webmanifest',
   
-  'ikon/icon-192.png',
-  'ikon/icon-512.png'
+  'icon-192.png',
+  'icon-512.png'
 ];
 
 // Installation: Cache:a filer
