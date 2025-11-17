@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sensotax | Sensorisk Taxonomi</title>
+    <title>Sensotax | Sensorisk taxonomi för öldomare</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Sensotax">
@@ -76,7 +76,7 @@
 <body>
 
 <div class="rubrik">
-    <h1>ÖL SENSORISK TAXONOMI</h1>
+    <h1>ÖLSENSORISK TAXONOMI FÖR ÖLDOMARE</h1>
     <p>Data hämtas från extern YAML-fil...</p>
 </div>
 
@@ -174,7 +174,7 @@ async function loadAndRender() {
         rubrik.textContent = "Laddar taxonomidata...";
         
         // 1. Hämta YAML-filen
-        const response = await fetch('./taxonomi.yaml');
+        const response = await fetch('./taxonomy.yaml');
         if (!response.ok) {
              throw new Error(`Kunde inte ladda data: ${response.statusText}`);
         }
@@ -189,7 +189,7 @@ async function loadAndRender() {
     } catch (error) {
         console.error("Fel vid laddning eller rendering:", error);
         rubrik.textContent = `FEL: Kunde inte ladda taxonomi. (${error.message})`;
-        container.innerHTML = `<p style="color: red;">Kontrollera att 'taxonomi.yaml' ligger i roten och att PWA-cachen rensats.</p>`;
+        container.innerHTML = `<p style="color: red;">Kontrollera att 'taxonomy.yaml' ligger i roten och att PWA-cachen rensats.</p>`;
     }
 }
 
