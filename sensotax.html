@@ -175,7 +175,7 @@ async function loadAndRender() {
         headerStatus.textContent = "Loading taxonomy data...";
         
         // 1. Fetch the YAML file
-        const taxonomyFilePath = './taxonomy.yaml';
+        const taxonomyFilePath = './taxonomy.yaml?v=20251117'; // Använd dagens datum/en unik ID        
         const response = await fetch(taxonomyFilePath);
         if (!response.ok) {
              throw new Error(`Failed to load data: ${response.statusText}`);
