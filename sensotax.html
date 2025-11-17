@@ -184,6 +184,7 @@ async function loadAndRender() {
 
         // 2. Parse YAML into JavaScript object
         const taxonomyData = parseYAML(yamlText);
+        console.log('Parsed Data:', taxonomyData[0]);
 
         // 3. Render the interface
         renderTaxonomy(taxonomyData);
