@@ -16,17 +16,16 @@
     <link rel="apple-touch-icon" href="images/icon-192.png">
 
     <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
-
     <style>
         /* Base styling */
-        body { font-family: sans-serif; margin: 0; padding: 20px; }
+        body { font-family: sans-serif; margin: 0; padding: 20px; color: #333; } /* Default text color changed to dark gray */
         
         /* Level 1 Styling */
         .level-1-category { 
             margin-bottom: 12px; 
             padding: 10px; 
             border-radius: 5px; 
-            color: white;
+            color: white; /* Text color for the Level 1 title remains white */
             cursor: pointer;
         }
         .level-1-title { 
@@ -34,18 +33,23 @@
             font-weight: bold; 
             display: flex;
             align-items: center;
+            /* Högre klickmål för hela raden */
+            padding-bottom: 10px;
         }
         .level-1-icon {
             margin-right: 10px;
             font-size: 1.5em; 
         }
 
-        /* Level 2 Styling (Subcategories) */
+        /* Level 2 Styling (Subcategories) - HIGH CONTRAST AREA */
         .level-2-container {
-            background-color: rgba(255, 255, 255, 0.15); 
+            /* NYTT: Solid, ljus bakgrund för maximal kontrast */
+            background-color: #f7f7f7; 
             padding: 10px 0 0 10px;
             margin-top: 10px;
             border-radius: 4px;
+            /* NYTT: Tvingar textfärg till svart för hög kontrast */
+            color: #000; 
         }
         .level-2-category {
             margin-bottom: 5px;
@@ -56,9 +60,11 @@
             padding: 5px;
             display: block;
             border-radius: 3px;
+            /* NYTT: Tydlig hover-effekt */
+            transition: background-color 0.2s;
         }
         .level-2-title:hover {
-            background-color: rgba(0, 0, 0, 0.1);
+            background-color: #e0e0e0; /* Tydlig, ljusgrå hover */
         }
 
         /* Level 3 Styling (Terms) */
@@ -66,7 +72,7 @@
             list-style: none;
             padding: 5px 0 5px 10px; 
             margin: 0;
-            background-color: rgba(0, 0, 0, 0.1);
+            background-color: #eeeeee; /* Lätt skuggning för att separera från Level 2-bakgrunden */
             border-radius: 3px;
         }
         .level-3-terms li {
@@ -76,10 +82,11 @@
         .level-3-item { 
             padding: 5px 8px;
             margin-bottom: 3px; 
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
-            background-color: rgba(255, 255, 255, 0.1); 
+            /* NYTT: Tydlig, ljusgrå avdelare mellan termer */
+            border-bottom: 1px solid #cccccc; 
+            background-color: #ffffff; /* Ren vit bakgrund för varje term */
             border-radius: 3px;
-            color: white;
+            color: #000; /* Säkerställer svart text även här */
             font-size: 0.9em;
             display: block; 
         }
