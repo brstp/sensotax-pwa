@@ -16,16 +16,17 @@
     <link rel="apple-touch-icon" href="images/icon-192.png">
 
     <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+
     <style>
         /* Base styling */
-        body { font-family: sans-serif; margin: 0; padding: 20px; color: #333; } /* Default text color changed to dark gray */
+        body { font-family: sans-serif; margin: 0; padding: 20px; color: #333; } 
         
         /* Level 1 Styling */
         .level-1-category { 
             margin-bottom: 12px; 
             padding: 10px; 
             border-radius: 5px; 
-            color: white; /* Text color for the Level 1 title remains white */
+            color: white; /* Level 1 title text remains white */
             cursor: pointer;
         }
         .level-1-title { 
@@ -33,7 +34,6 @@
             font-weight: bold; 
             display: flex;
             align-items: center;
-            /* Högre klickmål för hela raden */
             padding-bottom: 10px;
         }
         .level-1-icon {
@@ -41,15 +41,13 @@
             font-size: 1.5em; 
         }
 
-        /* Level 2 Styling (Subcategories) - HIGH CONTRAST AREA */
+        /* Level 2 Styling (Subcategories) - DYNAMISK FÄRG HÄR */
         .level-2-container {
-            /* NYTT: Solid, ljus bakgrund för maximal kontrast */
-            background-color: #f7f7f7; 
+            /* Bakgrundsfärgen sätts via JavaScript */
             padding: 10px 0 0 10px;
             margin-top: 10px;
             border-radius: 4px;
-            /* NYTT: Tvingar textfärg till svart för hög kontrast */
-            color: #000; 
+            color: #000; /* Tvingar textfärg till svart för kontrast */
         }
         .level-2-category {
             margin-bottom: 5px;
@@ -60,11 +58,10 @@
             padding: 5px;
             display: block;
             border-radius: 3px;
-            /* NYTT: Tydlig hover-effekt */
             transition: background-color 0.2s;
         }
         .level-2-title:hover {
-            background-color: #e0e0e0; /* Tydlig, ljusgrå hover */
+            /* Hover-färg sätts via JavaScript */
         }
 
         /* Level 3 Styling (Terms) */
@@ -72,7 +69,7 @@
             list-style: none;
             padding: 5px 0 5px 10px; 
             margin: 0;
-            background-color: #eeeeee; /* Lätt skuggning för att separera från Level 2-bakgrunden */
+            /* Bakgrundsfärgen sätts via JavaScript */
             border-radius: 3px;
         }
         .level-3-terms li {
@@ -82,13 +79,12 @@
         .level-3-item { 
             padding: 5px 8px;
             margin-bottom: 3px; 
-            /* NYTT: Tydlig, ljusgrå avdelare mellan termer */
-            border-bottom: 1px solid #cccccc; 
-            background-color: #ffffff; /* Ren vit bakgrund för varje term */
+            /* Bakgrundsfärgen sätts via JavaScript */
             border-radius: 3px;
-            color: #000; /* Säkerställer svart text även här */
+            color: #000; 
             font-size: 0.9em;
             display: block; 
+            /* Border sätts via JavaScript */
         }
         /* Hidden classes for toggling */
         .hidden { display: none; }
@@ -99,11 +95,89 @@
     <div id="taxonomy-container">Loading data...</div>
 
     <script>
-        // Filename for the taxonomy data
         const TAXONOMY_FILE = 'taxonomy.yaml';
         const container = document.getElementById('taxonomy-container');
+        
+        // --- START FÄRGHANTERING HSL ---
 
-        // Function to toggle visibility of nested content
+        // Konverterar HEX till HSL [h, s, l]
+        function hexToHsl(hex) {
+            let r = 0, g = 0, b = 0;
+            if (hex.length === 4) {
+                r = parseInt(hex[1] + hex[1], 16);
+                g = parseInt(hex[2] + hex[2], 16);
+                b = parseInt(hex[3] + hex[3], 16);
+            } else if (hex.length === 7) {
+                r = parseInt(hex[1] + hex[2], 16);
+                g = parseInt(hex[3] + hex[4], 16);
+                b = parseInt(hex[5] + hex[6], 16);
+            }
+            r /= 255; g /= 255; b /= 255;
+            let max = Math.max(r, g, b), min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+
+            if (max === min) {
+                h = s = 0; // achromatic
+            } else {
+                let d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                h /= 6;
+            }
+            return [h * 360, s * 100, l * 100];
+        }
+
+        // Konverterar HSL [h, s, l] till HEX
+        function hslToHex(h, s, l) {
+            h /= 360; s /= 100; l /= 100;
+            let r, g, b;
+            if (s === 0) {
+                r = g = b = l; // achromatic
+            } else {
+                const hue2rgb = (p, q, t) => {
+                    if (t < 0) t += 1;
+                    if (t > 1) t -= 1;
+                    if (t < 1 / 6) return p + (q - p) * 6 * t;
+                    if (t < 1 / 2) return q;
+                    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+                    return p;
+                };
+                let q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                let p = 2 * l - q;
+                r = hue2rgb(p, q, h + 1 / 3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1 / 3);
+            }
+            const toHex = x => {
+                const hex = Math.round(x * 255).toString(16);
+                return hex.length === 1 ? '0' + hex : hex;
+            };
+            return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+        }
+
+        /**
+         * Ljusar upp en HEX-kod till en given ljushetsnivå (L).
+         * @param {string} hex - Nivå 1 färg (#RRGGBB).
+         * @param {number} targetL - Önskad ljushet (0-100).
+         * @returns {string} Ljusare HEX-kod.
+         */
+        function lightenColour(hex, targetL) {
+            try {
+                let [h, s, l] = hexToHsl(hex);
+                // Bibehåll befintlig nyans (h) och mättnad (s), men sätt ny ljushet (l)
+                return hslToHex(h, s, targetL);
+            } catch (e) {
+                console.warn(`Colour conversion failed for ${hex}. Defaulting to white.`, e);
+                return '#FFFFFF'; // Fallback
+            }
+        }
+        // --- SLUT FÄRGHANTERING HSL ---
+
+
         function toggleCategory(element) {
             const content = element.nextElementSibling;
             if (content.classList.contains('hidden')) {
@@ -113,7 +187,6 @@
             }
         }
 
-        // Function to parse the YAML data using js-yaml library
         function parseYamlData(yamlText) {
             try {
                 return jsyaml.load(yamlText);
@@ -124,7 +197,7 @@
             }
         }
 
-        // Function to render the taxonomy structure
+        // Funktion för att rendera taxonomin
         function renderTaxonomy(data) {
             if (!data || !Array.isArray(data)) {
                 container.innerHTML = '<p>Taxonomy data is empty or incorrectly formatted (expected a top-level array).</p>';
@@ -139,16 +212,24 @@
             }
             
             data.forEach(level1 => {
+                const baseColour = level1.colour;
+
+                // BERÄKNA LJUSA FÄRGER FÖR KONTRAST (L>90)
+                const L2_BG_COLOUR = lightenColour(baseColour, 90);  // Ljusast för Level 2-behållaren
+                const L3_BG_COLOUR = lightenColour(baseColour, 95);  // Ljusare för Level 3-listan
+                const L3_ITEM_COLOUR = lightenColour(baseColour, 98); // Nästan vit för term-behållaren
+                const L3_BORDER_COLOUR = lightenColour(baseColour, 85); // Mörkare för avdelare
+
                 const level1Div = document.createElement('div');
                 level1Div.className = 'level-1-category';
 
-                if (level1.colour) {
-                    level1Div.style.backgroundColor = level1.colour;
+                if (baseColour) {
+                    level1Div.style.backgroundColor = baseColour;
                 } else {
                      console.warn(`Warning: No colour defined for ${level1.name || 'unknown category'}`);
                 }
                 
-                // 1. Level 1 Title (Icon and Name)
+                // 1. Level 1 Title
                 const titleDiv = document.createElement('div');
                 titleDiv.className = 'level-1-title';
                 
@@ -165,7 +246,7 @@
                 // 2. Level 2 Container (Categories)
                 const level2Container = document.createElement('div');
                 level2Container.className = 'level-2-container';
-                // NYTT: Klassen 'hidden' har tagits bort. Level 2 är nu synlig som standard.
+                level2Container.style.backgroundColor = L2_BG_COLOUR; // APPLICERAR LJUS FÄRG HÄR
 
                 if (level1.categories && Array.isArray(level1.categories)) {
                     level1.categories.forEach(level2 => {
@@ -177,12 +258,16 @@
                         level2Title.className = 'level-2-title';
                         level2Title.textContent = `+ ${level2.name || 'Unnamed Subcategory'}`;
                         level2Title.onclick = () => toggleCategory(level2Title);
+                        // APPLICERAR HOVER-FÄRG: Lätt mörkare version av Level 2 BG
+                        level2Title.onmouseover = () => level2Title.style.backgroundColor = lightenColour(baseColour, 88);
+                        level2Title.onmouseout = () => level2Title.style.backgroundColor = 'transparent';
                         level2Div.appendChild(level2Title);
 
                         // 4. Level 3 Terms (Hidden list)
                         const termsList = document.createElement('ul');
                         termsList.className = 'level-3-terms';
-                        termsList.classList.add('hidden'); // Level 3 förblir dold som standard
+                        termsList.classList.add('hidden'); 
+                        termsList.style.backgroundColor = L3_BG_COLOUR; // APPLICERAR LJUS FÄRG HÄR
 
                         if (level2.terms && Array.isArray(level2.terms)) {
                             level2.terms.forEach(term => {
@@ -191,6 +276,8 @@
                                 const termItem = document.createElement('div');
                                 termItem.className = 'level-3-item';
                                 termItem.textContent = term;
+                                termItem.style.backgroundColor = L3_ITEM_COLOUR; // APPLICERAR LJUS FÄRG HÄR
+                                termItem.style.borderBottom = `1px solid ${L3_BORDER_COLOUR}`; // APPLICERAR FÄRGAD BORDER
 
                                 listItem.appendChild(termItem);
                                 termsList.appendChild(listItem);
