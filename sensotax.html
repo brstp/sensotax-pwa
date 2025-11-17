@@ -88,87 +88,95 @@
 // 1. YAML PARSER: Embedded code using a simplified, robust parser
 // This version is stable for top-level arrays and handles indentation better.
 // =================================================================
-
 function parseYAML(yaml) {
-    const lines = yaml.split('\n');
-    let output = [];
-    let stack = [{ level: -1, ref: output }];
-    let currentRef = output;
+    const lines = yaml.split('\n');
+    let output = [];
+    let stack = [{ level: -1, ref: output }];
+    let currentRef = output;
 
-    lines.forEach(line => {
-        // line = line.replace(/#.*$/, '').trimEnd();
-        if (!line) return;
+    lines.forEach(line => {
+        // line = line.replace(/#.*$/, '').trimEnd();
+        if (!line) return;
 
-        const indent = line.search(/\S/);
-        const trimmedLine = line.trimStart();
-        const level = indent; 
+        const indent = line.search(/\S/);
+        const trimmedLine = line.trimStart();
+        const level = indent; 
 
-        // 1. Handle indentation change (unwind stack)
-        while (stack.length > 1 && stack[stack.length - 1].level >= level) {
-            stack.pop();
-        }
-        currentRef = stack[stack.length - 1].ref;
-        
-        const isListItem = trimmedLine.startsWith('-');
-        let key, value;
+        // 1. Handle indentation change (unwind stack)
+        while (stack.length > 1 && stack[stack.length - 1].level >= level) {
+            stack.pop();
+        }
+        currentRef = stack[stack.length - 1].ref;
+        
+        const isListItem = trimmedLine.startsWith('-');
+        let key, value;
 
-        if (isListItem) {
-            const content = trimmedLine.substring(1).trimStart();
-            const parts = content.match(/^(.+?):\s*(.*)/);
-            
-            if (parts) {
-                let key = parts[1].trim();
-                let value = parts[2].trim();
-                
-                // Nytt steg: Städa värdet från eventuella kommentarer
-                if (value.includes('#')) {
-                    value = value.substring(0, value.indexOf('#')).trim();
-                }
-                
-                if (value === '') { // Start of new object or list
-                let newObj = {};
-                
-                if (Array.isArray(currentRef)) {
-                    currentRef.push(newObj);
-                }
-                
-                // Add the first key/value pair (e.g., id: A)
-                newObj[key] = value;
+        if (isListItem) {
+            const content = trimmedLine.substring(1).trimStart();
+            const parts = content.match(/^(.+?):\s*(.*)/);
+            
+            if (parts) { // Hanterar objekt i listor (- id: A)
+                let key = parts[1].trim();
+                let value = parts[2].trim();
+                
+                // Nytt steg: Städa värdet från eventuella kommentarer
+                if (value.includes('#')) {
+                    value = value.substring(0, value.indexOf('#')).trim();
+                }
+                
+                if (value === '') { // Start of new object or list
+                    let newObj = {};
+                    
+                    if (Array.isArray(currentRef)) {
+                        currentRef.push(newObj);
+                    }
+                    
+                    // Add the first key/value pair (e.g., id: A)
+                    newObj[key] = value;
 
-                // Push new object to stack
-                stack.push({ level, key, ref: newObj });
-                currentRef = newObj;
+                    // Push new object to stack
+                    stack.push({ level, key, ref: newObj });
+                    currentRef = newObj;
 
-            } else { // Simple array item (e.g., - Grapefrukt, inside 'termer:')
-                if (Array.isArray(currentRef)) {
-                    currentRef.push(content);
-                }
-            }
-        } else {
-            const parts = trimmedLine.match(/^(.+?):\s*(.*)/);
-            if (parts) {
-                key = parts[1].trim();
-                value = parts[2].trim();
-                
-                if (value === '') { // Start of new object or list (e.g., kategorier: or termer:)
-                    let newRef = (key === 'termer' || key === 'kategorier') ? [] : {};
+                } else { // Simple array item (e.g., color: #FF5733)
+                    // THIS IS THE SIMPLE K/V PAIR INSIDE LISTS
+                    if (Array.isArray(currentRef)) {
+                        currentRef[currentRef.length - 1][key] = value; 
+                    } else {
+                        currentRef[key] = value;
+                    }
+                }
+            } // <--- DENNA KLAMMER (HÖGERPARENTES) SAKNADES
+        } else { // Hanterar ej list-items (utanför listan)
 
-                    // Add to current object
-                    currentRef[key] = newRef;
-                    
-                    // Push new reference to stack
-                    stack.push({ level, key, ref: newRef });
-                    currentRef = newRef;
-                } else { // Simple key/value pair (e.g., color: "#FF5733")
-                    currentRef[key] = value;
-                }
-            }
-        }
-    });
+            const parts = trimmedLine.match(/^(.+?):\s*(.*)/);
+            if (parts) {
+                key = parts[1].trim();
+                value = parts[2].trim();
+                
+                // Lägg till logiken för kommentarsborttagning även här (för att vara konsekvent)
+                if (value.includes('#')) {
+                    value = value.substring(0, value.indexOf('#')).trim();
+                }
+                
+                if (value === '') { // Start of new object or list (e.g., kategorier: or termer:)
+                    let newRef = (key === 'termer' || key === 'kategorier') ? [] : {};
 
+                    // Add to current object
+                    currentRef[key] = newRef;
+                    
+                    // Push new reference to stack
+                    stack.push({ level, key, ref: newRef });
+                    currentRef = newRef;
+                } else { // Simple key/value pair
+                    currentRef[key] = value;
+                }
+            }
+        }
+    });
+    
     return output; 
 }
-
 
 // =================================================================
 // 2. DATA FETCHING AND INTERFACE RENDERING
