@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sensotax | Sensorisk taxonomi för öldomare</title>
+    <title>Sensotax | Sensorisk Taxonomi</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Sensotax">
@@ -16,7 +16,7 @@
             color: #333;
             padding: 15px;
         }
-        .niva1 {
+        .level1 {
             padding: 12px;
             margin-top: 15px;
             cursor: pointer;
@@ -28,11 +28,11 @@
             display: flex;
             align-items: center;
         }
-        .niva1-icon {
+        .level1-icon {
             font-size: 1.4em;
             margin-right: 10px;
         }
-        .niva2 {
+        .level2 {
             background-color: #ffffff;
             color: #333;
             padding: 10px 15px;
@@ -42,10 +42,10 @@
             font-weight: 600;
             transition: background-color 0.1s;
         }
-        .niva2:hover {
+        .level2:hover {
             background-color: #f0f0f0;
         }
-        .niva3 {
+        .level3 {
             list-style-type: none;
             margin: 0;
             padding: 5px 20px;
@@ -55,55 +55,52 @@
             padding: 10px 15px;
             font-size: 0.9em;
         }
-        .niva3 li {
+        .level3 li {
             padding: 3px 0;
             border-bottom: 1px dotted #eee;
         }
-        .niva3 li:last-child {
+        .level3 li:last-child {
             border-bottom: none;
         }
-        .rubrik {
+        .header {
             text-align: center;
             color: #2a6fdb;
             margin-bottom: 30px;
         }
-        /* Styling för Nivå 2 border (använder CSS-variabel) */
-        .niva2-container {
-            border-left: 5px solid var(--niva1-color);
+        /* Styling for Level 2 border (uses CSS variable) */
+        .level2-container {
+            border-left: 5px solid var(--level1-color);
         }
     </style>
 </head>
 <body>
 
-<div class="rubrik">
-    <h1>ÖLSENSORISKTAXONOMI FÖR ÖLDOMARE</h1>
-    <p>Data hämtas från extern YAML-fil...</p>
+<div class="header">
+    <h1>ÖL SENSORISK TAXONOMI</h1>
+    <p>Loading taxonomy data...</p>
 </div>
 
-<div id="taxonomi-container">
+<div id="taxonomy-container">
     </div>
 
 <script>
 // =================================================================
-// 1. YAML PARSER: Inbäddad kod för att konvertera YAML till JavaScript
-// Detta är nödvändigt eftersom webbläsare inte kan läsa YAML direkt.
-// Kod baserad på en kompakt, klientsides YAML-parser.
+// 1. YAML PARSER: Embedded code to convert YAML to JavaScript
 // =================================================================
 
 function parseYAML(yaml) {
-    // Förenklad parser som hanterar grundläggande YAML-listor och objekt (som vår struktur)
     const lines = yaml.split('\n');
     let output = {};
     let stack = [];
     let currentObject = output;
 
     lines.forEach(line => {
-        line = line.replace(/#.*$/, '').trimEnd(); // Ta bort kommentarer och trimma
+        line = line.replace(/#.*$/, '').trimEnd(); 
         if (!line) return;
 
         const indent = line.search(/\S/);
         const trimmedLine = line.trimStart();
-        const level = indent / 2; // Går ut från 2 mellanslag per indent
+        const level = indent / 2; 
 
         while (stack.length > level) {
             stack.pop();
@@ -114,12 +111,12 @@ function parseYAML(yaml) {
         
         if (isListItem) {
             let keyMatch = trimmedLine.substring(1).trimStart().match(/^(\w+):\s*(.*)/);
-            if (keyMatch) { // Hanterar objekt i listor (t.ex. - namn: Citrus)
+            if (keyMatch) { 
                 let newObj = { [keyMatch[1]]: keyMatch[2].trim() };
                 currentObject.push(newObj);
                 stack.push({ level, key: keyMatch[1], ref: newObj });
                 currentObject = newObj;
-            } else if (trimmedLine === '-') { // Hanterar start av ny Nivå 1-post (list of objects)
+            } else if (trimmedLine === '-') {
                  if (!Array.isArray(currentObject)) {
                     const parentKey = Object.keys(currentObject).pop();
                     currentObject = currentObject[parentKey] = [];
@@ -128,7 +125,7 @@ function parseYAML(yaml) {
                 currentObject.push(newObj);
                 stack.push({ level, ref: newObj });
                 currentObject = newObj;
-            } else { // Hanterar enkla listelement (termer)
+            } else { 
                 if (!Array.isArray(currentObject)) {
                     const parentKey = Object.keys(currentObject).pop();
                     currentObject = currentObject[parentKey] = [];
@@ -141,7 +138,7 @@ function parseYAML(yaml) {
                 let key = parts[1].trim();
                 let value = parts[2].trim();
                 
-                if (value === '') { // Nytt objekt eller lista startar
+                if (value === '') { 
                     let newRef = Array.isArray(currentObject) ? {} : {};
                     if(Array.isArray(currentObject)) {
                         currentObject[currentObject.length - 1][key] = newRef;
@@ -150,120 +147,122 @@ function parseYAML(yaml) {
                     }
                     stack.push({ level, key, ref: newRef });
                     currentObject = newRef;
-                } else { // Enkelt nyckel/värde-par
+                } else { 
                     currentObject[key] = value;
                 }
             }
         }
     });
 
-    // Enkel fix för att få ut 'taxonomi'-listan
-    return output.taxonomi || output; 
+    return output.taxonomy || output; 
 }
 
 
 // =================================================================
-// 2. DATAHÄMTNING OCH GRÄNSSNITTSBYGGANDE
+// 2. DATA FETCHING AND INTERFACE RENDERING
 // =================================================================
 
-const container = document.getElementById('taxonomi-container');
-const rubrik = document.querySelector('.rubrik p');
+const container = document.getElementById('taxonomy-container');
+const headerStatus = document.querySelector('.header p');
 
 async function loadAndRender() {
     try {
-        rubrik.textContent = "Laddar taxonomidata...";
+        headerStatus.textContent = "Loading taxonomy data...";
         
-        // 1. Hämta YAML-filen
-        const response = await fetch('./taxonomy.yaml');
+        // 1. Fetch the YAML file (UPDATED FILENAME)
+        const taxonomyFilePath = './taxonomy.yaml';
+        const response = await fetch(taxonomyFilePath);
         if (!response.ok) {
-             throw new Error(`Kunde inte ladda data: ${response.statusText}`);
+             throw new Error(`Failed to load data: ${response.statusText}`);
         }
         const yamlText = await response.text();
 
-        // 2. Parsa YAML till JavaScript-objekt
-        const taxonomyData = parseYAML(yamlText);
-        
-        // 3. Rendra gränssnittet
+        // 2. Parse YAML into JavaScript object
+        const rawData = parseYAML(yamlText);
+        const taxonomyData = rawData.taxonomi || rawData;
+
+        // 3. Render the interface
         renderTaxonomy(taxonomyData);
         
     } catch (error) {
-        console.error("Fel vid laddning eller rendering:", error);
-        rubrik.textContent = `FEL: Kunde inte ladda taxonomi. (${error.message})`;
-        container.innerHTML = `<p style="color: red;">Kontrollera att 'taxonomy.yaml' ligger i roten och att PWA-cachen rensats.</p>`;
+        console.error("Error loading or rendering:", error);
+        headerStatus.textContent = `ERROR: Failed to load taxonomy. (${error.message})`;
+        container.innerHTML = `<p style="color: red;">Check 'taxonomy.yaml' file existence and syntax, and ensure PWA cache is cleared (v17+).</p>`;
     }
 }
 
 function renderTaxonomy(data) {
     if (!Array.isArray(data)) {
-        throw new Error("Taxonomidata är felaktigt formaterad (Måste vara en lista).");
+        throw new Error("Taxonomy data is improperly formatted (Must be a top-level array).");
     }
 
     container.innerHTML = '';
-    rubrik.textContent = "Klar för bedömning.";
+    headerStatus.textContent = "Ready for evaluation.";
 
-    data.forEach(niva1 => {
-        // Skapa Nivå 1-element
-        const niva1Div = document.createElement('div');
-        niva1Div.className = 'niva1';
-        niva1Div.style.backgroundColor = niva1.color;
+    data.forEach(level1 => {
+        // Create Level 1 element
+        const level1Div = document.createElement('div');
+        level1Div.className = 'level1';
+        level1Div.style.backgroundColor = level1.color;
         
         const iconSpan = document.createElement('span');
-        iconSpan.className = 'niva1-icon';
-        iconSpan.textContent = niva1.icon;
-        niva1Div.appendChild(iconSpan);
+        iconSpan.className = 'level1-icon';
+        iconSpan.textContent = level1.icon;
+        level1Div.appendChild(iconSpan);
         
-        niva1Div.appendChild(document.createTextNode(`${niva1.id}. ${niva1.namn}`));
-        container.appendChild(niva1Div);
+        // Use ID (A, B, C...) and name (Fruktig...) from YAML
+        level1Div.appendChild(document.createTextNode(`${level1.id}. ${level1.namn}`));
+        container.appendChild(level1Div);
 
-        // Skapa container för Nivå 2-kategorier (Visibel som standard)
-        const niva2Container = document.createElement('div');
-        niva2Container.className = 'niva2-container';
-        // Sätt CSS-variabeln för Nivå 2 border
-        niva2Container.style.setProperty('--niva1-color', niva1.color);
-        niva2Container.style.display = 'block'; 
-        container.appendChild(niva2Container);
+        // Create container for Level 2 categories (Visible by default)
+        const level2Container = document.createElement('div');
+        level2Container.className = 'level2-container';
+        // Set CSS variable for Level 2 border color
+        level2Container.style.setProperty('--level1-color', level1.color);
+        level2Container.style.display = 'block'; 
+        container.appendChild(level2Container);
 
-        // Rendra Nivå 2 och 3
-        if (Array.isArray(niva1.kategorier)) {
-            niva1.kategorier.forEach(niva2 => {
-                const niva2Div = document.createElement('div');
-                niva2Div.className = 'niva2';
-                niva2Div.textContent = niva2.namn;
-                niva2Container.appendChild(niva2Div);
+        // Render Level 2 and 3
+        if (Array.isArray(level1.kategorier)) {
+            level1.kategorier.forEach(level2 => {
+                const level2Div = document.createElement('div');
+                level2Div.className = 'level2';
+                level2Div.textContent = level2.namn;
+                level2Container.appendChild(level2Div);
 
-                const niva3Ul = document.createElement('ul');
-                niva3Ul.className = 'niva3';
-                niva3Ul.style.display = 'none'; // Nivå 3 är dold som standard
+                const level3Ul = document.createElement('ul');
+                level3Ul.className = 'level3';
+                level3Ul.style.display = 'none'; // Level 3 is hidden by default
                 
-                if (Array.isArray(niva2.termer)) {
-                    niva2.termer.forEach(term => {
+                if (Array.isArray(level2.termer)) {
+                    level2.termer.forEach(term => {
                         const li = document.createElement('li');
                         li.textContent = term;
-                        niva3Ul.appendChild(li);
+                        level3Ul.appendChild(li);
                     });
                 }
-                niva2Container.appendChild(niva3Ul);
+                level2Container.appendChild(level3Ul);
 
-                // Klickhändelse för Nivå 2 (visar/döljer Nivå 3)
-                niva2Div.addEventListener('click', function() {
-                    const nextNiva3 = this.nextElementSibling;
-                    if (nextNiva3 && nextNiva3.classList.contains('niva3')) {
-                        nextNiva3.style.display = nextNiva3.style.display === 'none' ? 'block' : 'none';
+                // Click handler for Level 2 (toggles Level 3 visibility)
+                level2Div.addEventListener('click', function() {
+                    const nextLevel3 = this.nextElementSibling;
+                    if (nextLevel3 && nextLevel3.classList.contains('level3')) {
+                        nextLevel3.style.display = nextLevel3.style.display === 'none' ? 'block' : 'none';
                     }
                 });
             });
         }
 
-        // Klickhändelse för Nivå 1 (visar/döljer Nivå 2-containern)
-        niva1Div.addEventListener('click', function() {
+        // Click handler for Level 1 (toggles Level 2 container visibility)
+        level1Div.addEventListener('click', function() {
             const nextContainer = this.nextElementSibling;
             if (nextContainer) {
                 const isHidden = nextContainer.style.display === 'none';
                 nextContainer.style.display = isHidden ? 'block' : 'none';
                 
-                // Om Nivå 1 döljs, dölj även alla Nivå 3-listor i den
+                // If Level 1 is hidden, also hide all Level 3 lists within it
                 if (!isHidden) {
-                    nextContainer.querySelectorAll('.niva3').forEach(ul => {
+                    nextContainer.querySelectorAll('.level3').forEach(ul => {
                         ul.style.display = 'none';
                     });
                 }
@@ -272,21 +271,21 @@ function renderTaxonomy(data) {
     });
 }
 
-// Starta laddningen
+// Start fetching and rendering
 loadAndRender();
 
 // =================================================================
-// 3. SERVICE WORKER REGISTRERING (Ligger här för att använda load-event)
+// 3. SERVICE WORKER REGISTRATION 
 // =================================================================
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        // Kontrollera att sökvägen till SW är korrekt för GitHub Pages
+        // Ensure the path to SW is correct for GitHub Pages
         navigator.serviceWorker.register('/sensotax-pwa/service-worker.js') 
             .then(registration => {
-                console.log('SW registrerad:', registration);
+                console.log('SW registered:', registration);
             })
             .catch(error => {
-                console.error('SW registrering misslyckades:', error);
+                console.error('SW registration failed:', error);
             });
     });
 }

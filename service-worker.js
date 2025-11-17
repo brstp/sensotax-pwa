@@ -1,13 +1,18 @@
-// Öka till v15 (Final fix attempt)
-const CACHE_NAME = 'sensotax-v19'; 
+// Öka CACHE_NAME till v17 eller högre!
+const CACHE_NAME = 'sensotax-v20'; 
 
 const urlsToCache = [
+  // ... befintliga filer ...
   './', 
   'sensotax.html',
   'manifest.webmanifest',
-  // OBS: Vi använder nu absoluta sökvägar för ikonerna i cachen.
-  '/sensotax-pwa/icon-192.png', 
-  '/sensotax-pwa/icon-512.png'
+  
+  // NYTT: Lägg till datafilen!
+  'taxonomy.yaml',
+  
+  // ... övriga ikoner ...
+  'icon-192.png',
+  'icon-512.png'
 ];
 
 // Installation: Cache:a filer
