@@ -1,6 +1,5 @@
 // Öka CACHE_NAME till v17 eller högre!
-const CACHE_NAME = 'sensotax-v21'; 
-
+const CACHE_NAME = 'oltaxonomi-cache-v22';
 const urlsToCache = [
   // ... befintliga filer ...
   './', 
