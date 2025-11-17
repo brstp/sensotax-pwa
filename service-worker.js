@@ -1,5 +1,5 @@
 // Öka till v15 (Final fix attempt)
-const CACHE_NAME = 'sensotax-v17'; 
+const CACHE_NAME = 'sensotax-v18'; 
 
 const urlsToCache = [
   './', 
