@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Öl Sensorisk Taxonomi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 15px;
+        }
+        .niva1 {
+            padding: 12px;
+            margin-top: 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: white; /* Textfärg alltid vit på Nivå 1 */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+        }
+        .niva1-icon {
+            font-size: 1.4em;
+            margin-right: 10px;
+        }
+        .niva2 {
+            background-color: #ffffff;
+            color: #333;
+            padding: 10px 15px;
+            margin-top: 3px;
+            cursor: pointer;
+            border-bottom: 1px solid #ddd;
+            font-weight: 600;
+            transition: background-color 0.1s;
+        }
+        .niva2:hover {
+            background-color: #f0f0f0;
+        }
+        .niva3 {
+            list-style-type: none;
+            margin: 0;
+            padding: 5px 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-top: none;
+            padding: 10px 15px;
+            font-size: 0.9em;
+            /* display: none; tas bort av JS för initial expansion */
+        }
+        .niva3 li {
+            padding: 3px 0;
+            border-bottom: 1px dotted #eee;
+        }
+        .niva3 li:last-child {
+            border-bottom: none;
+        }
+        .rubrik {
+            text-align: center;
+            color: #2a6fdb;
+            margin-bottom: 30px;
+        }
+    </style>
+    <link rel="manifest" href="manifest.webmanifest">
+</head>
+<body>
+
+<div class="rubrik">
+    <h1>ÖL SENSORISK TAXONOMI</h1>
+    <p>Värderingsneutral hierarki (Nivå 1 → Nivå 2 → Nivå 3)</p>
+</div>
+
+<div id="taxonomi-container">
+    </div>
+
+<script>
+// === DATAMODEL & STILAR ===
+const data = {
+    'A_Fruktig_och_Ester_relaterad': {
+        'Citrus': ['Grapefrukt', 'Apelsin', 'Citron', 'Lime', 'Mandarin', 'Bergamott', 'Pompelmus', 'Citronskal'],
+        'Stenfrukt_och_Karnfrukt': ['Persika', 'Aprikos', 'Plommon', 'Nektarin', 'Körsbär', 'Äpple', 'Päron', 'Banan', 'Rosé'],
+        'Tropisk_och_Exotisk_Frukt': ['Mango', 'Passionsfrukt', 'Ananas', 'Guava', 'Papaya', 'Litchi', 'Kiwi', 'Kokosnöt', 'Vattenmelon', 'Honungsmelon', 'Cantaloupe-melon'],
+        'Bär_och_Vinbär': ['Svarta vinbär', 'Blåbär', 'Hallon', 'Björnbär', 'Jordgubbe', 'Röda vinbär', 'Krusbär'],
+        'Torkad_och_Mörk_Frukt': ['Russin', 'Torkad frukt'],
+        'Åldring_och_Oxidationstoner': ['Sherry/Vinös', 'Oxidativ', 'Kartong/Våt papp', 'Grön']
+    },
+    'B_Kryddig_Floral_och_Vegetal': {
+        'Kryddig': ['Peppar', 'Kryddnejlika', 'Anis', 'Muskot', 'Ingefära', 'Lakrits', 'Enbär'],
+        'Floral_Blommig': ['Ros', 'Geranium', 'Syren', 'Jasmin', 'Fläder', 'Kamomill', 'Lavendel', 'Apelsinblom'],
+        'Örtig_Aromatisk': ['Dill', 'Timjan', 'Basilika', 'Rosmarin', 'Mynta', 'Grönmynta', 'Grön te', 'Svart te', 'Mejram'],
+        'Grön_och_Vegetal': ['Gräsig', 'Nyklippt gräs', 'Lök', 'Vitlök', 'Selleri', 'Nässla', 'Gurka', 'DMS', 'Kokt kål', 'Majs'],
+        'Ofräsch_Vegetal': ['Ruttet ägg', 'Skunkig', 'Catty']
+    },
+    'C_Spannmal_och_Sötma': {
+        'Basmalt_och_Brödig': ['Maltig', 'Korn', 'Brödig', 'Degig', 'Cracker', 'Varm', 'Kaka/Kex', 'Brödskorpa'],
+        'Karamell_och_Sirap': ['Karamell', 'Kola', 'Toffee', 'Knäck', 'Sirap', 'Farinsocker', 'Melass', 'Fudge', 'Bränt socker', 'Karamelliserad lök'],
+        'Enkel_Sötma_och_Nöt': ['Lätt sötma', 'Honung', 'Socker', 'Vanilj', 'Mandel/Marsipan', 'Hasselnöt', 'Valnöt', 'Jordnöt', 'Oljig'],
+        'Torr_och_Rå': ['Torr', 'Hö', 'Halm', 'Kornig', 'Mjölig'],
+        'Smörig': ['Smörig', 'Popcorn', 'Härskt/Smörigt']
+    },
+    'D_Rostad_och_Bränd': {
+        'Kaffe_och_Choklad': ['Kaffe', 'Espresso', 'Choklad', 'Mörk choklad', 'Mjölkchoklad', 'Kakao', 'Nygjord kaffe'],
+        'Bränd_och_Sotig': ['Bränd', 'Sotig', 'Bitter Choklad', 'Bränd sockervadd'],
+        'Rökig': ['Röksmak', 'Torvig', 'Lätt Rök', 'Skinka/Bacon']
+    },
+    'E_Komplex_Oorganisk_och_Fenolisk': {
+        'Kåda_och_Tall': ['Kådig', 'Tall', 'Cederträ'],
+        'Jordig': ['Jordig', 'Mossa/Svamp', 'Doff', 'Smutsig/Jordig'],
+        'Trä_och_Alkohol': ['Träig', 'Tobak', 'Läder', 'Rökelse', 'Kognak/Barrique', 'Värmande/Spritig', 'Lösningsmedel', 'Plåster/Medicinsk', 'Fenolisk'],
+        'Infektion_och_Syra': ['Vinäger/Sur', 'Sur/Mjölksyra', 'Hästtäcke/Stall', 'Ostig', 'Klor/Klorfenol'],
+        'Mineral_och_Oorganisk': ['Metallisk', 'Blodig', 'Kemisk', 'Tändsticka/Rök']
+    },
+    'G_Munkänsla_Textur_och_Eftersmak': {
+        'Taktil_Känsla_Kropp': ['Fyllig/Tät', 'Medium fyllighet', 'Lätt/Vattnig', 'Silkeslen/Mjuk', 'Oljig/Fet', 'Sträv'],
+        'Kolsyra_och_Skum': ['Kraftig/Högt kolsyrad', 'Låg/Platt', 'Mjuk/Pärlande', 'Skummig/Mousserande', 'Tunn/Försvinnande skum'],
+        'Termisk_och_Alkohol': ['Kylande', 'Stickande'],
+        'Grundsmaker': ['Besk', 'Söt', 'Salt'],
+        'Eftersmak': ['Kvardröjande', 'Ren/Kort', 'Klibbig/Seg', 'Beläggande']
+    }
+};
+
+const categoryStyles = {
+    'A_Fruktig_och_Ester_relaterad': { color: '#FF5733', icon: '🍊' }, // Ljus orange/röd för frukt
+    'B_Kryddig_Floral_och_Vegetal': { color: '#32CD32', icon: '🌿' }, // Ljusgrön för det vegetala
+    'C_Spannmal_och_Sötma': { color: '#DAA520', icon: '🍞' }, // Gyllengul/Halmfärg för spannmål
+    'D_Rostad_och_Bränd': { color: '#654321', icon: '☕' }, // Mörkbrun för rostat/kaffe
+    'E_Komplex_Oorganisk_och_Fenolisk': { color: '#808080', icon: '🌲' }, // Grå/grön för kåda, trä och kemiskt
+    'G_Munkänsla_Textur_och_Eftersmak': { color: '#2a6fdb', icon: '💧' }  // Blå för vatten/känsla
+};
+
+const container = document.getElementById('taxonomi-container');
+
+// === FUNKTIONER ===
+
+function replaceKey(key) {
+    // Ersätter A_Fruktig_och_Ester_relaterad med A. Fruktig och Ester-relaterad
+    return key.replace(/_/g, ' ').replace(/(.)\s(\w+)/, (match, p1, p2) => `${p1}. ${p2}`);
+}
+
+function generateTaxonomy() {
+    for (const niva1Key in data) {
+        const style = categoryStyles[niva1Key] || { color: '#000000', icon: '?' };
+
+        // 1. Skapa Nivå 1-element
+        const niva1Div = document.createElement('div');
+        niva1Div.className = 'niva1';
+        niva1Div.style.backgroundColor = style.color;
+        
+        const iconSpan = document.createElement('span');
+        iconSpan.className = 'niva1-icon';
+        iconSpan.textContent = style.icon;
+        niva1Div.appendChild(iconSpan);
+        
+        niva1Div.appendChild(document.createTextNode(replaceKey(niva1Key)));
+        container.appendChild(niva1Div);
+
+        // 2. Skapa container för Nivå 2-kategorier (VISIBEL SOM STANDARD)
+        const niva2Container = document.createElement('div');
+        niva2Container.style.display = 'block'; // Sätts till 'block' för initial expansion
+        container.appendChild(niva2Container);
+
+        for (const niva2Key in data[niva1Key]) {
+            // 3. Skapa Nivå 2-element
+            const niva2Div = document.createElement('div');
+            niva2Div.className = 'niva2';
+            niva2Div.style.borderLeftColor = style.color; // Färgmatchande border
+            niva2Div.textContent = niva2Key.replace(/_/g, ' ');
+            niva2Container.appendChild(niva2Div);
+
+            // 4. Skapa Nivå 3-element
+            const niva3Ul = document.createElement('ul');
+            niva3Ul.className = 'niva3';
+            niva3Ul.style.display = 'none'; // Nivå 3 är dold som standard
+            data[niva1Key][niva2Key].forEach(term => {
+                const li = document.createElement('li');
+                li.textContent = term;
+                niva3Ul.appendChild(li);
+            });
+            niva2Container.appendChild(niva3Ul);
+
+            // Klickhändelse för Nivå 2 (visar/döljer Nivå 3)
+            niva2Div.addEventListener('click', function() {
+                const nextNiva3 = this.nextElementSibling;
+                if (nextNiva3 && nextNiva3.classList.contains('niva3')) {
+                    nextNiva3.style.display = nextNiva3.style.display === 'none' ? 'block' : 'none';
+                }
+            });
+        }
+
+        // Klickhändelse för Nivå 1 (visar/döljer Nivå 2-containern)
+        niva1Div.addEventListener('click', function() {
+            const nextContainer = this.nextElementSibling;
+            if (nextContainer) {
+                nextContainer.style.display = nextContainer.style.display === 'none' ? 'block' : 'none';
+                
+                // Om Nivå 1 döljs, dölj även alla Nivå 3-listor i den
+                if (nextContainer.style.display === 'none') {
+                    nextContainer.querySelectorAll('.niva3').forEach(ul => {
+                        ul.style.display = 'none';
+                    });
+                }
+            }
+        });
+    }
+}
+
+// Service Worker-registrering (Endast om du hostar den)
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js');
+    });
+}
+
+generateTaxonomy();
+</script>
+
+</body>
+</html>
