@@ -85,75 +85,81 @@
 
 <script>
 // =================================================================
-// 1. YAML PARSER: Embedded code to convert YAML to JavaScript
+// 1. YAML PARSER: Embedded code using a simplified, robust parser
+// This version is stable for top-level arrays and handles indentation better.
 // =================================================================
 
 function parseYAML(yaml) {
     const lines = yaml.split('\n');
-    let output = []; // <-- Initialisera som en ARRAY, då YAML-filen börjar med en lista    let stack = [];
-    let currentObject = output;
+    let output = [];
+    let stack = [{ level: -1, ref: output }];
+    let currentRef = output;
 
     lines.forEach(line => {
-        line = line.replace(/#.*$/, '').trimEnd(); 
+        line = line.replace(/#.*$/, '').trimEnd();
         if (!line) return;
 
         const indent = line.search(/\S/);
         const trimmedLine = line.trimStart();
-        const level = indent / 2; 
+        const level = indent; 
 
-        while (stack.length > level) {
+        // 1. Handle indentation change (unwind stack)
+        while (stack.length > 1 && stack[stack.length - 1].level >= level) {
             stack.pop();
-            currentObject = stack.length > 0 ? stack[stack.length - 1].ref : output;
         }
+        currentRef = stack[stack.length - 1].ref;
         
         const isListItem = trimmedLine.startsWith('-');
-        
+        let key, value;
+
         if (isListItem) {
-            let keyMatch = trimmedLine.substring(1).trimStart().match(/^(\w+):\s*(.*)/);
-            if (keyMatch) { 
-                let newObj = { [keyMatch[1]]: keyMatch[2].trim() };
-                currentObject.push(newObj);
-                stack.push({ level, key: keyMatch[1], ref: newObj });
-                currentObject = newObj;
-            } else if (trimmedLine === '-') {
-                 if (!Array.isArray(currentObject)) {
-                    const parentKey = Object.keys(currentObject).pop();
-                    currentObject = currentObject[parentKey] = [];
-                 }
+            const content = trimmedLine.substring(1).trimStart();
+            const parts = content.match(/^(.+?):\s*(.*)/);
+            
+            if (parts) { // Object start (e.g., - id: A)
+                key = parts[1].trim();
+                value = parts[2].trim();
                 let newObj = {};
-                currentObject.push(newObj);
-                stack.push({ level, ref: newObj });
-                currentObject = newObj;
-            } else { 
-                if (!Array.isArray(currentObject)) {
-                    const parentKey = Object.keys(currentObject).pop();
-                    currentObject = currentObject[parentKey] = [];
+                
+                if (Array.isArray(currentRef)) {
+                    currentRef.push(newObj);
                 }
-                currentObject.push(trimmedLine.substring(1).trimStart());
+                
+                // Add the first key/value pair (e.g., id: A)
+                newObj[key] = value;
+
+                // Push new object to stack
+                stack.push({ level, key, ref: newObj });
+                currentRef = newObj;
+
+            } else { // Simple array item (e.g., - Grapefrukt, inside 'termer:')
+                if (Array.isArray(currentRef)) {
+                    currentRef.push(content);
+                }
             }
         } else {
-            let parts = trimmedLine.match(/^(.+?):\s*(.*)/);
+            const parts = trimmedLine.match(/^(.+?):\s*(.*)/);
             if (parts) {
-                let key = parts[1].trim();
-                let value = parts[2].trim();
+                key = parts[1].trim();
+                value = parts[2].trim();
                 
-                if (value === '') { 
-                    let newRef = Array.isArray(currentObject) ? {} : {};
-                    if(Array.isArray(currentObject)) {
-                        currentObject[currentObject.length - 1][key] = newRef;
-                    } else {
-                        currentObject[key] = newRef;
-                    }
+                if (value === '') { // Start of new object or list (e.g., kategorier: or termer:)
+                    let newRef = (key === 'termer' || key === 'kategorier') ? [] : {};
+
+                    // Add to current object
+                    currentRef[key] = newRef;
+                    
+                    // Push new reference to stack
                     stack.push({ level, key, ref: newRef });
-                    currentObject = newRef;
-                } else { 
-                    currentObject[key] = value;
+                    currentRef = newRef;
+                } else { // Simple key/value pair (e.g., color: "#FF5733")
+                    currentRef[key] = value;
                 }
             }
         }
     });
-    
-    return output;
+
+    return output; 
 }
 
 
@@ -168,7 +174,7 @@ async function loadAndRender() {
     try {
         headerStatus.textContent = "Loading taxonomy data...";
         
-        // 1. Fetch the YAML file (UPDATED FILENAME)
+        // 1. Fetch the YAML file
         const taxonomyFilePath = './taxonomy.yaml';
         const response = await fetch(taxonomyFilePath);
         if (!response.ok) {
@@ -177,7 +183,7 @@ async function loadAndRender() {
         const yamlText = await response.text();
 
         // 2. Parse YAML into JavaScript object
-        const taxonomyData = parseYAML(yamlText); // <-- rawData är nu listan direkt
+        const taxonomyData = parseYAML(yamlText);
 
         // 3. Render the interface
         renderTaxonomy(taxonomyData);
@@ -185,7 +191,7 @@ async function loadAndRender() {
     } catch (error) {
         console.error("Error loading or rendering:", error);
         headerStatus.textContent = `ERROR: Failed to load taxonomy. (${error.message})`;
-        container.innerHTML = `<p style="color: red;">Check 'taxonomy.yaml' file existence and syntax, and ensure PWA cache is cleared (v17+).</p>`;
+        container.innerHTML = `<p style="color: red;">Check 'taxonomy.yaml' file existence and syntax, and ensure PWA cache is cleared.</p>`;
     }
 }
 
