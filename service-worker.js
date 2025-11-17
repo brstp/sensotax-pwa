@@ -1,13 +1,12 @@
-// Höj versionsnumret igen! T.ex. till v4.
-const CACHE_NAME = 'oltaxonomi-cache-v4'; 
+const CACHE_NAME = 'oltaxonomi-cache-v5'; 
 
 const urlsToCache = [
-  // ALLA sökvägar MÅSTE vara relativa till Service Workerns scope
+  './', 
+  
   'sensotax.html',
   'manifest.webmanifest',
-  'service-worker.js',
-  'index.html', // index.html ligger i roten
-  'ikon/icon-192.png', // Ikonerna ligger i mappen ikon/
+  
+  'ikon/icon-192.png',
   'ikon/icon-512.png'
 ];
 
