@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sensotax | Sensorisk Taxonomi</title>
+    <title>Sensotax | Sensorisk taxonomi för öldomare</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Sensotax">
@@ -76,7 +76,7 @@
 <body>
 
 <div class="header">
-    <h1>ÖL SENSORISK TAXONOMI</h1>
+    <h1>ÖLSENSORISK TAXONOMI FÖR ÖLDOMARE</h1>
     <p>Loading taxonomy data...</p>
 </div>
 
@@ -179,7 +179,7 @@ async function loadAndRender() {
 
         // 2. Parse YAML into JavaScript object
         const rawData = parseYAML(yamlText);
-        const taxonomyData = rawData.taxonomi || rawData;
+        const taxonomyData = rawData.taxonomy || rawData;
 
         // 3. Render the interface
         renderTaxonomy(taxonomyData);
