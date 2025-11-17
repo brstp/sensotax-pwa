@@ -1,11 +1,7 @@
-#
-# Sensotax Taxonomi: Värderingsneutral sensorisk databas
-# Format: YAML (för enkel redigering och versionshantering)
-#
 - id: A
   namn: Fruktig & Ester-relaterad
   fokus: Estrar, Citrus, Bär, Tropisk frukt och Oxidationstoner.
-  color: #FF5733 # Orange/Röd för frukt
+  color: #FF5733 
   icon: F
   kategorier:
     - namn: Citrus
@@ -65,7 +61,7 @@
 - id: B
   namn: Kryddig, Floral & Vegetal
   fokus: Fenoler, Örter, Gräsighet, Sulfider och Kryddor.
-  color: #32CD32 # Grön för vegetala toner
+  color: #32CD32 
   icon: 🌿
   kategorier:
     - namn: Kryddig
@@ -119,7 +115,7 @@
 - id: C
   namn: Spannmål & Sötma
   fokus: Malt, Karamell, Enkel Sötma, Nötter och Diacetyl.
-  color: #DAA520 # Gyllengul/Halmfärg
+  color: #DAA520 
   icon: 🍞
   kategorier:
     - namn: Basmalt & Brödig
@@ -171,7 +167,7 @@
 - id: D
   namn: Rostad & Bränd
   fokus: Rostade malter, Kaffe, Choklad och Rökighet.
-  color: #654321 # Mörkbrun för rostat
+  color: #654321
   icon: ☕
   kategorier:
     - namn: Kaffe & Choklad
@@ -199,7 +195,7 @@
 - id: E
   namn: Komplex, Oorganisk och Fenolisk
   fokus: Kåda, Trä, Lösningsmedel, Infektioner och Mineraler.
-  color: #808080 # Grå/Skogsgrön för komplexitet
+  color: #808080
   icon: 🌲
   kategorier:
     - namn: Kåda & Tall
@@ -241,7 +237,7 @@
 - id: G
   namn: Munkänsla, Textur & Eftersmak
   fokus: Taktila, termiska och grundsmaker.
-  color: #2a6fdb # Blå för känsla/vatten
+  color: #2a6fdb 
   icon: 💧
   kategorier:
     - namn: Taktil Känsla (Kropp)

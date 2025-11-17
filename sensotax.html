@@ -84,232 +84,220 @@
     </div>
 
 <script>
-// =================================================================
-// 1. YAML PARSER: Embedded, robust parser for array-based data
-// FIX: Prevents '#' in hex codes from being stripped as a comment.
-// =================================================================
+    // =================================================================
+    // 1. YAML PARSER: Embedded, robust parser for array-based data
+    // FIX: No complex comment stripping, relies on clean YAML data.
+    // =================================================================
 
-function parseYAML(yaml) {
-    const lines = yaml.split('\n');
-    let output = []; 
-    let stack = [{ level: -1, ref: output }];
-    let currentRef = output;
+    function parseYAML(yaml) {
+        const lines = yaml.split('\n');
+        let output = []; 
+        let stack = [{ level: -1, ref: output }];
+        let currentRef = output;
 
-    lines.forEach(line => {
-        // We do not strip comments here. Comment stripping is handled when assigning values.
-        line = line.trimEnd(); 
-        if (!line.trimStart()) return; // Skip empty or comment lines
+        lines.forEach(line => {
+            // Only trim end whitespace. We rely on the user to remove comment lines.
+            line = line.trimEnd(); 
+            if (!line.trimStart()) return; // Skip empty lines
 
-        const indent = line.search(/\S/);
-        const trimmedLine = line.trimStart();
-        const level = indent; 
+            const indent = line.search(/\S/);
+            const trimmedLine = line.trimStart();
+            const level = indent; 
 
-        // 1. Handle indentation change (unwind stack)
-        while (stack.length > 1 && stack[stack.length - 1].level >= level) {
-            stack.pop();
-        }
-        currentRef = stack[stack.length - 1].ref;
-        
-        const isListItem = trimmedLine.startsWith('-');
-        let key, value;
-
-        if (isListItem) {
-            const content = trimmedLine.substring(1).trimStart();
-            const parts = content.match(/^(.+?):\s*(.*)/);
+            // 1. Handle indentation change (unwind stack)
+            while (stack.length > 1 && stack[stack.length - 1].level >= level) {
+                stack.pop();
+            }
+            currentRef = stack[stack.length - 1].ref;
             
-            if (parts) { // List object start (e.g., - id: A)
-                key = parts[1].trim();
-                value = parts[2].trim();
-                
-                // --- K/V PÅ LIS-OBJEKT ---
-                if (value.includes('#') && value.indexOf('#') > 0) {
-                    value = value.substring(0, value.indexOf('#')).trim();
-                }
-                
-                // 1. Create new object and push to the current array reference
-                let newObj = {};
-                if (Array.isArray(currentRef)) {
-                    currentRef.push(newObj);
-                } else {
-                    let parentRef = stack[stack.length - 2].ref;
-                    if (Array.isArray(parentRef)) {
-                        parentRef.push(newObj);
-                    }
-                }
-                
-                // 2. Add the first key/value pair (e.g., id: A)
-                newObj[key] = value;
-                
-                // 3. Push new object to stack
-                stack.push({ level, key, ref: newObj });
-                currentRef = newObj;
+            const isListItem = trimmedLine.startsWith('-');
+            let key, value;
 
-            } else { // Simple array item (e.g., - Grapefrukt)
-                if (Array.isArray(currentRef)) {
-                    currentRef.push(content);
-                }
-            }
-        } else { // Standard key/value pair (e.g., color: #FF5733)
-            const parts = trimmedLine.match(/^(.+?):\s*(.*)/);
-            if (parts) {
-                key = parts[1].trim();
-                value = parts[2].trim();
-
-                // 1. Strip comments safely, preserving hex code if it's the value itself
-                // We check if # exists AND is not the starting character (i.e., not a hex code)
-                if (value.includes('#') && value.indexOf('#') > 0) {
-                    value = value.substring(0, value.indexOf('#')).trim();
-                }
-
-                if (value === '') { // Start of new object or list (e.g., kategorier: or termer:)
-                    let newRef = (key === 'termer' || key === 'kategorier') ? [] : {};
-                    currentRef[key] = newRef;
+            if (isListItem) {
+                const content = trimmedLine.substring(1).trimStart();
+                const parts = content.match(/^(.+?):\s*(.*)/);
+                
+                if (parts) { // List object start (e.g., - id: A)
+                    key = parts[1].trim();
+                    value = parts[2].trim();
                     
-                    stack.push({ level, key, ref: newRef });
-                    currentRef = newRef;
-                } else { // Simple key/value pair
-                    currentRef[key] = value;
-                }
-            }
-        }
-    });
-
-    return output; 
-}
-
-
-// =================================================================
-// 2. DATA FETCHING AND INTERFACE RENDERING
-// =================================================================
-
-const container = document.getElementById('taxonomy-container');
-const headerStatus = document.querySelector('.header p');
-
-async function loadAndRender() {
-    try {
-        headerStatus.textContent = "Loading taxonomy data...";
-        
-        // 1. Fetch the YAML file
-        const taxonomyFilePath = './taxonomy.yaml';
-        const response = await fetch(taxonomyFilePath);
-        if (!response.ok) {
-             throw new Error(`Failed to load data: ${response.statusText}`);
-        }
-        const yamlText = await response.text();
-
-        // 2. Parse YAML into JavaScript object
-        const taxonomyData = parseYAML(yamlText);
-
-        // 3. Render the interface
-        renderTaxonomy(taxonomyData);
-        
-    } catch (error) {
-        console.error("Error loading or rendering:", error);
-        headerStatus.textContent = `ERROR: Failed to load taxonomy. (${error.message})`;
-        container.innerHTML = `<p style="color: red;">Check 'taxonomy.yaml' file existence and syntax, and ensure PWA cache is cleared (v29+).</p>`;
-    }
-}
-
-function renderTaxonomy(data) {
-    if (!Array.isArray(data)) {
-        throw new Error("Taxonomy data is improperly formatted (Must be a top-level array).");
-    }
-
-    container.innerHTML = '';
-    headerStatus.textContent = "Ready for evaluation.";
-
-    data.forEach(level1 => {
-        // Create Level 1 element
-        const level1Div = document.createElement('div');
-        level1Div.className = 'level1';
-        // Apply color property (FINAL FIX: This now works as value is correct)
-        level1Div.style.backgroundColor = level1.color;
-        
-        const iconSpan = document.createElement('span');
-        iconSpan.className = 'level1-icon';
-        iconSpan.textContent = level1.icon;
-        level1Div.appendChild(iconSpan);
-        
-        // Use ID (A, B, C...) and name (Fruktig...) from YAML
-        level1Div.appendChild(document.createTextNode(`${level1.id}. ${level1.namn}`));
-        container.appendChild(level1Div);
-
-        // Create container for Level 2 categories (Visible by default)
-        const level2Container = document.createElement('div');
-        level2Container.className = 'level2-container';
-        // Set CSS variable for Level 2 border color
-        level2Container.style.setProperty('--level1-color', level1.color);
-        level2Container.style.display = 'block'; 
-        container.appendChild(level2Container);
-
-        // Render Level 2 and 3
-        if (Array.isArray(level1.kategorier)) {
-            level1.kategorier.forEach(level2 => {
-                const level2Div = document.createElement('div');
-                level2Div.className = 'level2';
-                level2Div.textContent = level2.namn;
-                level2Container.appendChild(level2Div);
-
-                const level3Ul = document.createElement('ul');
-                level3Ul.className = 'level3';
-                level3Ul.style.display = 'none'; // Level 3 is hidden by default
-                
-                if (Array.isArray(level2.termer)) {
-                    level2.termer.forEach(term => {
-                        const li = document.createElement('li');
-                        li.textContent = term;
-                        level3Ul.appendChild(li);
-                    });
-                }
-                level2Container.appendChild(level3Ul);
-
-                // Click handler for Level 2 (toggles Level 3 visibility)
-                level2Div.addEventListener('click', function() {
-                    const nextLevel3 = this.nextElementSibling;
-                    if (nextLevel3 && nextLevel3.classList.contains('level3')) {
-                        nextLevel3.style.display = nextLevel3.style.display === 'none' ? 'block' : 'none';
+                    // 1. Create new object and push to the current array reference
+                    let newObj = {};
+                    if (Array.isArray(currentRef)) {
+                        currentRef.push(newObj);
+                    } else {
+                        let parentRef = stack[stack.length - 2].ref;
+                        if (Array.isArray(parentRef)) {
+                            parentRef.push(newObj);
+                        }
                     }
-                });
-            });
-        }
+                    
+                    // 2. Add the first key/value pair (e.g., id: A)
+                    newObj[key] = value;
+                    
+                    // 3. Push new object to stack
+                    stack.push({ level, key, ref: newObj });
+                    currentRef = newObj;
 
-        // Click handler for Level 1 (toggles Level 2 container visibility)
-        level1Div.addEventListener('click', function() {
-            const nextContainer = this.nextElementSibling;
-            if (nextContainer) {
-                const isHidden = nextContainer.style.display === 'none';
-                nextContainer.style.display = isHidden ? 'block' : 'none';
-                
-                // If Level 1 is hidden, also hide all Level 3 lists within it
-                if (!isHidden) {
-                    nextContainer.querySelectorAll('.level3').forEach(ul => {
-                        ul.style.display = 'none';
-                    });
+                } else { // Simple array item (e.g., - Grapefrukt)
+                    if (Array.isArray(currentRef)) {
+                        currentRef.push(content);
+                    }
+                }
+            } else { // Standard key/value pair (e.g., color: #FF5733)
+                const parts = trimmedLine.match(/^(.+?):\s*(.*)/);
+                if (parts) {
+                    key = parts[1].trim();
+                    value = parts[2].trim();
+
+                    if (value === '') { // Start of new object or list (e.g., kategorier: or termer:)
+                        let newRef = (key === 'termer' || key === 'kategorier') ? [] : {};
+                        currentRef[key] = newRef;
+                        
+                        stack.push({ level, key, ref: newRef });
+                        currentRef = newRef;
+                    } else { // Simple key/value pair
+                        currentRef[key] = value;
+                    }
                 }
             }
         });
-    });
-}
 
-// Start fetching and rendering
-loadAndRender();
+        return output; 
+    }
 
-// =================================================================
-// 3. SERVICE WORKER REGISTRATION 
-// =================================================================
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        // Ensure the path to SW is correct for GitHub Pages
-        navigator.serviceWorker.register('/sensotax-pwa/service-worker.js') 
-            .then(registration => {
-                console.log('SW registered:', registration);
-            })
-            .catch(error => {
-                console.error('SW registration failed:', error);
+
+    // =================================================================
+    // 2. DATA FETCHING AND INTERFACE RENDERING
+    // =================================================================
+
+    const container = document.getElementById('taxonomy-container');
+    const headerStatus = document.querySelector('.header p');
+
+    async function loadAndRender() {
+        try {
+            headerStatus.textContent = "Loading taxonomy data...";
+            
+            // 1. Fetch the YAML file
+            const taxonomyFilePath = './taxonomy.yaml';
+            const response = await fetch(taxonomyFilePath);
+            if (!response.ok) {
+                 throw new Error(`Failed to load data: ${response.statusText}`);
+            }
+            const yamlText = await response.text();
+
+            // 2. Parse YAML into JavaScript object
+            const taxonomyData = parseYAML(yamlText);
+
+            // 3. Render the interface
+            renderTaxonomy(taxonomyData);
+            
+        } catch (error) {
+            console.error("Error loading or rendering:", error);
+            headerStatus.textContent = `ERROR: Failed to load taxonomy. (${error.message})`;
+            container.innerHTML = `<p style="color: red;">Check 'taxonomy.yaml' file existence and syntax, and ensure PWA cache is cleared (v30+).</p>`;
+        }
+    }
+
+    function renderTaxonomy(data) {
+        if (!Array.isArray(data)) {
+            throw new Error("Taxonomy data is improperly formatted (Must be a top-level array).");
+        }
+
+        container.innerHTML = '';
+        headerStatus.textContent = "Ready for evaluation.";
+
+        data.forEach(level1 => {
+            // Create Level 1 element
+            const level1Div = document.createElement('div');
+            level1Div.className = 'level1';
+            level1Div.style.backgroundColor = level1.color;
+            
+            const iconSpan = document.createElement('span');
+            iconSpan.className = 'level1-icon';
+            iconSpan.textContent = level1.icon;
+            level1Div.appendChild(iconSpan);
+            
+            // Use ID (A, B, C...) and name (Fruktig...) from YAML
+            level1Div.appendChild(document.createTextNode(`${level1.id}. ${level1.namn}`));
+            container.appendChild(level1Div);
+
+            // Create container for Level 2 categories (Visible by default)
+            const level2Container = document.createElement('div');
+            level2Container.className = 'level2-container';
+            // Set CSS variable for Level 2 border color
+            level2Container.style.setProperty('--level1-color', level1.color);
+            level2Container.style.display = 'block'; 
+            container.appendChild(level2Container);
+
+            // Render Level 2 and 3
+            if (Array.isArray(level1.kategorier)) {
+                level1.kategorier.forEach(level2 => {
+                    const level2Div = document.createElement('div');
+                    level2Div.className = 'level2';
+                    level2Div.textContent = level2.namn;
+                    level2Container.appendChild(level2Div);
+
+                    const level3Ul = document.createElement('ul');
+                    level3Ul.className = 'level3';
+                    level3Ul.style.display = 'none'; // Level 3 is hidden by default
+                    
+                    if (Array.isArray(level2.termer)) {
+                        level2.termer.forEach(term => {
+                            const li = document.createElement('li');
+                            li.textContent = term;
+                            level3Ul.appendChild(li);
+                        });
+                    }
+                    level2Container.appendChild(level3Ul);
+
+                    // Click handler for Level 2 (toggles Level 3 visibility)
+                    level2Div.addEventListener('click', function() {
+                        const nextLevel3 = this.nextElementSibling;
+                        if (nextLevel3 && nextLevel3.classList.contains('level3')) {
+                            nextLevel3.style.display = nextLevel3.style.display === 'none' ? 'block' : 'none';
+                        }
+                    });
+                });
+            }
+
+            // Click handler for Level 1 (toggles Level 2 container visibility)
+            level1Div.addEventListener('click', function() {
+                const nextContainer = this.nextElementSibling;
+                if (nextContainer) {
+                    const isHidden = nextContainer.style.display === 'none';
+                    nextContainer.style.display = isHidden ? 'block' : 'none';
+                    
+                    // If Level 1 is hidden, also hide all Level 3 lists within it
+                    if (!isHidden) {
+                        nextContainer.querySelectorAll('.level3').forEach(ul => {
+                            ul.style.display = 'none';
+                        });
+                    }
+                }
             });
-    });
-}
-</script>
+        });
+    }
+
+    // Start fetching and rendering
+    loadAndRender();
+
+    // =================================================================
+    // 3. SERVICE WORKER REGISTRATION 
+    // =================================================================
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            // Ensure the path to SW is correct for GitHub Pages
+            navigator.serviceWorker.register('/sensotax-pwa/service-worker.js') 
+                .then(registration => {
+                    console.log('SW registered:', registration);
+                })
+                .catch(error => {
+                    console.error('SW registration failed:', error);
+                });
+        });
+    }
+    </script>
 
 </body>
 </html>
