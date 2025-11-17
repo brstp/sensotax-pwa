@@ -1,14 +1,15 @@
 // ÄNDRA DETTA VÄRDE VID VARJE UPPDATERING AV TAXONOMIN!
 // T.ex. 'oltaxonomi-cache-v2', 'oltaxonomi-cache-v3'
-const CACHE_NAME = 'oltaxonomi-cache-v1'; 
-
+const CACHE_NAME = 'oltaxonomi-cache-v1'; // Kom ihåg att bumpa detta!
 const urlsToCache = [
-  // Listan på filer som ska sparas offline
-  '/oltaxonomi.html', // Använd absoluta sökvägar (med / i början)
-  '/manifest.webmanifest',
-  '/service-worker.js',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png' 
+  // Alla sökvägar måste vara absoluta från roten av GitHub Pages-sidan
+  '/sensotax-pwa/', 
+  '/sensotax-pwa/sensotax.html',
+  '/sensotax-pwa/manifest.webmanifest',
+  '/sensotax-pwa/service-worker.js',
+  '/sensotax-pwa/ikon/icon-192.png', 
+  '/sensotax-pwa/ikon/icon-512.png',
+  '/sensotax-pwa/index.html' // Lägg till även index.html
 ];
 
 // Installation: Cache:a filer

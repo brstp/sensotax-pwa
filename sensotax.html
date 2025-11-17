@@ -4,6 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Öl Sensorisk Taxonomi</title>
+    <script>
+        // Registrera Service Worker för offline-funktionalitet
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                // OBS: Vi använder sökvägen till roten för att säkerställa korrekt omfattning.
+                navigator.serviceWorker.register('/sensotax-pwa/service-worker.js') 
+                    .then(registration => {
+                        console.log('SW registrerad:', registration);
+                    })
+                    .catch(error => {
+                        console.error('SW registrering misslyckades:', error);
+                    });
+            });
+        }
+    </script>
     <style>
         body {
             font-family: Arial, sans-serif;

@@ -1,16 +1,17 @@
 {
   "name": "Sensotax",
   "short_name": "Sensotax",
-  "start_url": "./sensotax.html",
+  "start_url": "/sensotax-pwa/sensotax.html", 
+  "display": "standalone",
   // ... andra inställningar
   "icons": [
     {
-      "src": "./ikon/icon-192.png",
+      "src": "/sensotax-pwa/ikon/icon-192.png", // Ändrad sökväg
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "./ikon/icon-512.png",
+      "src": "/sensotax-pwa/ikon/icon-512.png", // Ändrad sökväg
       "sizes": "512x512",
       "type": "image/png"
     }
