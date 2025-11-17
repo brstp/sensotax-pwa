@@ -27,7 +27,7 @@
             padding: 10px; 
             border-radius: 5px; 
             color: white;
-            cursor: pointer; /* Indicates Level 1 is clickable */
+            cursor: pointer;
         }
         .level-1-title { 
             font-size: 1.2em;
@@ -37,12 +37,12 @@
         }
         .level-1-icon {
             margin-right: 10px;
-            font-size: 1.5em; /* Emoji size */
+            font-size: 1.5em; 
         }
 
         /* Level 2 Styling (Subcategories) */
         .level-2-container {
-            background-color: rgba(255, 255, 255, 0.15); /* Slight overlay */
+            background-color: rgba(255, 255, 255, 0.15); 
             padding: 10px 0 0 10px;
             margin-top: 10px;
             border-radius: 4px;
@@ -64,21 +64,24 @@
         /* Level 3 Styling (Terms) */
         .level-3-terms {
             list-style: none;
-            padding: 5px 0 5px 20px;
+            padding: 5px 0 5px 10px; 
             margin: 0;
-            display: flex;
-            flex-wrap: wrap;
             background-color: rgba(0, 0, 0, 0.1);
             border-radius: 3px;
         }
         .level-3-terms li {
-            padding: 2px 8px;
-            margin-right: 8px;
-            margin-bottom: 5px;
-            background-color: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
+            padding: 0; /* Tar bort LI-padding */
+            margin: 0;
+        }
+        .level-3-item { /* NY CSS: Vertikal Behållare för varje term */
+            padding: 5px 8px;
+            margin-bottom: 3px; 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+            background-color: rgba(255, 255, 255, 0.1); 
+            border-radius: 3px;
             color: white;
             font-size: 0.9em;
+            display: block; 
         }
         /* Hidden classes for toggling */
         .hidden { display: none; }
@@ -93,9 +96,8 @@
         const TAXONOMY_FILE = 'taxonomy.yaml';
         const container = document.getElementById('taxonomy-container');
 
-        // Function to toggle visibility of nested content (Level 2 and Level 3)
+        // Function to toggle visibility of nested content
         function toggleCategory(element) {
-            // Target the next sibling element (the container for the nested list/div)
             const content = element.nextElementSibling;
             if (content.classList.contains('hidden')) {
                 content.classList.remove('hidden');
@@ -122,7 +124,7 @@
                 return;
             }
 
-            container.innerHTML = ''; // Clear 'Loading data...' status
+            container.innerHTML = ''; 
 
             if (data.length === 0) {
                  container.innerHTML = '<p>Taxonomy loaded successfully, but the category list is empty.</p>';
@@ -133,34 +135,30 @@
                 const level1Div = document.createElement('div');
                 level1Div.className = 'level-1-category';
 
-                // Apply colour (BRITISH ENGLISH: 'colour')
                 if (level1.colour) {
                     level1Div.style.backgroundColor = level1.colour;
                 } else {
                      console.warn(`Warning: No colour defined for ${level1.name || 'unknown category'}`);
                 }
                 
-                // 1. Level 1 Title (Including Icon)
+                // 1. Level 1 Title (Icon and Name)
                 const titleDiv = document.createElement('div');
                 titleDiv.className = 'level-1-title';
                 
-                // Render Icon
                 const iconSpan = document.createElement('span');
                 iconSpan.className = 'level-1-icon';
                 iconSpan.textContent = level1.icon || '';
                 titleDiv.appendChild(iconSpan);
 
-                // Render Name
                 titleDiv.append(level1.name || 'Unknown category');
                 
-                // Add click handler to toggle Level 2 visibility
                 titleDiv.onclick = () => toggleCategory(titleDiv);
                 level1Div.appendChild(titleDiv);
 
                 // 2. Level 2 Container (Categories)
                 const level2Container = document.createElement('div');
                 level2Container.className = 'level-2-container';
-                level2Container.classList.add('hidden'); // Hidden by default
+                level2Container.classList.add('hidden'); 
 
                 // Requirement: Category B (ID: B) should be expanded by default
                 if (level1.id === 'B') {
@@ -182,12 +180,18 @@
                         // 4. Level 3 Terms (Hidden list)
                         const termsList = document.createElement('ul');
                         termsList.className = 'level-3-terms';
-                        termsList.classList.add('hidden'); // Hidden by default
+                        termsList.classList.add('hidden'); 
 
                         if (level2.terms && Array.isArray(level2.terms)) {
                             level2.terms.forEach(term => {
                                 const listItem = document.createElement('li');
-                                listItem.textContent = term;
+                                
+                                // NYTT: Skapar en block-behållare för vertikal layout och framtida innehåll
+                                const termItem = document.createElement('div');
+                                termItem.className = 'level-3-item';
+                                termItem.textContent = term;
+
+                                listItem.appendChild(termItem);
                                 termsList.appendChild(listItem);
                             });
                         }

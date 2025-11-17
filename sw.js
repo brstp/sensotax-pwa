@@ -1,5 +1,5 @@
 // Change the cache name when updating files to force service worker to install new assets
-const CACHE_NAME = 'sensotax-cache-v4'; 
+const CACHE_NAME = 'sensotax-cache-v5'; 
 const urlsToCache = [
   './',
   'sensotax.html',
