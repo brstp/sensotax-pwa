@@ -2,7 +2,7 @@
 # Sensotax Taxonomi: Värderingsneutral sensorisk databas
 # Format: YAML (för enkel redigering och versionshantering)
 #
-taxonomi:
+taxonomy:
   - id: A
     namn: Fruktig & Ester-relaterad
     fokus: Estrar, Citrus, Bär, Tropisk frukt och Oxidationstoner.
