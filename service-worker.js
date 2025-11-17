@@ -1,11 +1,14 @@
-const CACHE_NAME = 'oltaxonomi-cache-v1';
+// ÄNDRA DETTA VÄRDE VID VARJE UPPDATERING AV TAXONOMIN!
+// T.ex. 'oltaxonomi-cache-v2', 'oltaxonomi-cache-v3'
+const CACHE_NAME = 'oltaxonomi-cache-v1'; 
+
 const urlsToCache = [
-  'oltaxonomi.html',
-  'manifest.webmanifest',
-  'service-worker.js',
-  'icon-192.png',
-  'icon-512.png',
-  // Lägg till alla andra filer du använder (CSS, bilder etc.)
+  // Listan på filer som ska sparas offline
+  '/oltaxonomi.html', // Använd absoluta sökvägar (med / i början)
+  '/manifest.webmanifest',
+  '/service-worker.js',
+  '/icon-192.png',
+  '/icon-512.png' 
 ];
 
 // Installation: Cache:a filer
@@ -26,12 +29,15 @@ self.addEventListener('activate', event => {
       return Promise.all(
         cacheNames.map(cacheName => {
           if (cacheWhitelist.indexOf(cacheName) === -1) {
+            console.log('Rensar gammal cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
       );
     })
   );
+  // Viktigt: Se till att service workern tar kontroll över klienterna omedelbart
+  return self.clients.claim(); 
 });
 
 // Hämta: Använd cache:ade filer när det är möjligt
