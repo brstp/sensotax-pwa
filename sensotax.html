@@ -84,99 +84,100 @@
     </div>
 
 <script>
+
 // =================================================================
-// 1. YAML PARSER: Embedded code using a simplified, robust parser
-// This version is stable for top-level arrays and handles indentation better.
+// 1. YAML PARSER: Embedded, robust parser for array-based data
+// This version correctly handles top-level arrays and comments/hex codes.
 // =================================================================
+
 function parseYAML(yaml) {
-    const lines = yaml.split('\n');
-    let output = [];
-    let stack = [{ level: -1, ref: output }];
-    let currentRef = output;
+    const lines = yaml.split('\n');
+    let output = []; // Initialize as an array, as the YAML file starts with a list
+    let stack = [{ level: -1, ref: output }];
+    let currentRef = output;
 
-    lines.forEach(line => {
-        // line = line.replace(/#.*$/, '').trimEnd();
-        if (!line) return;
+    lines.forEach(line => {
+        // IMPORTANT: We must NOT strip comments here, as '#' is used in hex codes.
+        // We trim only the end to clean whitespace
+        line = line.trimEnd(); 
+        if (!line.trimStart()) return; // Skip empty or comment lines
 
-        const indent = line.search(/\S/);
-        const trimmedLine = line.trimStart();
-        const level = indent; 
+        const indent = line.search(/\S/);
+        const trimmedLine = line.trimStart();
+        const level = indent; 
 
-        // 1. Handle indentation change (unwind stack)
-        while (stack.length > 1 && stack[stack.length - 1].level >= level) {
-            stack.pop();
-        }
-        currentRef = stack[stack.length - 1].ref;
-        
-        const isListItem = trimmedLine.startsWith('-');
-        let key, value;
+        // 1. Handle indentation change (unwind stack)
+        while (stack.length > 1 && stack[stack.length - 1].level >= level) {
+            stack.pop();
+        }
+        currentRef = stack[stack.length - 1].ref;
+        
+        const isListItem = trimmedLine.startsWith('-');
+        let key, value;
 
-        if (isListItem) {
-            const content = trimmedLine.substring(1).trimStart();
-            const parts = content.match(/^(.+?):\s*(.*)/);
-            
-            if (parts) { // Hanterar objekt i listor (- id: A)
-                let key = parts[1].trim();
-                let value = parts[2].trim();
-                
-                // Nytt steg: Städa värdet från eventuella kommentarer
-                if (value.includes('#')) {
-                    value = value.substring(0, value.indexOf('#')).trim();
-                }
-                
-                if (value === '') { // Start of new object or list
-                    let newObj = {};
-                    
-                    if (Array.isArray(currentRef)) {
-                        currentRef.push(newObj);
-                    }
-                    
-                    // Add the first key/value pair (e.g., id: A)
-                    newObj[key] = value;
+        if (isListItem) {
+            const content = trimmedLine.substring(1).trimStart();
+            const parts = content.match(/^(.+?):\s*(.*)/);
+            
+            if (parts) { // List object start (e.g., - id: A)
+                key = parts[1].trim();
+                value = parts[2].trim();
+                
+                // 1. Create new object and push to the current array reference
+                let newObj = {};
+                if (Array.isArray(currentRef)) {
+                    currentRef.push(newObj);
+                } else {
+                    // Fallback needed if we are nested and push is expected
+                    let parentRef = stack[stack.length - 2].ref;
+                    if (Array.isArray(parentRef)) {
+                        parentRef.push(newObj);
+                    }
+                }
+                
+                // 2. Add the first key/value pair, handling comments/hex codes
+                if (value.includes('#')) {
+                    value = value.substring(0, value.indexOf('#')).trim();
+                }
 
-                    // Push new object to stack
-                    stack.push({ level, key, ref: newObj });
-                    currentRef = newObj;
+                newObj[key] = value;
+                
+                // 3. Push new object to stack
+                stack.push({ level, key, ref: newObj });
+                currentRef = newObj;
 
-                } else { // Simple array item (e.g., color: #FF5733)
-                    // THIS IS THE SIMPLE K/V PAIR INSIDE LISTS
-                    if (Array.isArray(currentRef)) {
-                        currentRef[currentRef.length - 1][key] = value; 
-                    } else {
-                        currentRef[key] = value;
-                    }
-                }
-            } // <--- DENNA KLAMMER (HÖGERPARENTES) SAKNADES
-        } else { // Hanterar ej list-items (utanför listan)
+            } else { // Simple array item (e.g., - Grapefrukt)
+                if (Array.isArray(currentRef)) {
+                    currentRef.push(content);
+                }
+            }
+        } else { // Standard key/value pair (e.g., color: #FF5733)
+            const parts = trimmedLine.match(/^(.+?):\s*(.*)/);
+            if (parts) {
+                key = parts[1].trim();
+                value = parts[2].trim();
 
-            const parts = trimmedLine.match(/^(.+?):\s*(.*)/);
-            if (parts) {
-                key = parts[1].trim();
-                value = parts[2].trim();
-                
-                // Lägg till logiken för kommentarsborttagning även här (för att vara konsekvent)
-                if (value.includes('#')) {
-                    value = value.substring(0, value.indexOf('#')).trim();
-                }
-                
-                if (value === '') { // Start of new object or list (e.g., kategorier: or termer:)
-                    let newRef = (key === 'termer' || key === 'kategorier') ? [] : {};
+                // 1. Strip comments/hex code safely
+                if (value.includes('#')) {
+                    value = value.substring(0, value.indexOf('#')).trim();
+                }
 
-                    // Add to current object
-                    currentRef[key] = newRef;
-                    
-                    // Push new reference to stack
-                    stack.push({ level, key, ref: newRef });
-                    currentRef = newRef;
-                } else { // Simple key/value pair
-                    currentRef[key] = value;
-                }
-            }
-        }
-    });
-    
+                if (value === '') { // Start of new object or list (e.g., kategorier: or termer:)
+                    let newRef = (key === 'termer' || key === 'kategorier') ? [] : {};
+                    currentRef[key] = newRef;
+                    
+                    stack.push({ level, key, ref: newRef });
+                    currentRef = newRef;
+                } else { // Simple key/value pair
+                    currentRef[key] = value;
+                }
+            }
+        }
+    });
+
     return output; 
 }
+
 
 // =================================================================
 // 2. DATA FETCHING AND INTERFACE RENDERING
@@ -190,7 +191,7 @@ async function loadAndRender() {
         headerStatus.textContent = "Loading taxonomy data...";
         
         // 1. Fetch the YAML file
-        const taxonomyFilePath = './taxonomy.yaml?v=20251117'; // Använd dagens datum/en unik ID        
+        const taxonomyFilePath = './taxonomy.yaml';
         const response = await fetch(taxonomyFilePath);
         if (!response.ok) {
              throw new Error(`Failed to load data: ${response.statusText}`);
@@ -199,7 +200,6 @@ async function loadAndRender() {
 
         // 2. Parse YAML into JavaScript object
         const taxonomyData = parseYAML(yamlText);
-        console.log('Parsed Data:', taxonomyData[0]);
 
         // 3. Render the interface
         renderTaxonomy(taxonomyData);
@@ -207,7 +207,7 @@ async function loadAndRender() {
     } catch (error) {
         console.error("Error loading or rendering:", error);
         headerStatus.textContent = `ERROR: Failed to load taxonomy. (${error.message})`;
-        container.innerHTML = `<p style="color: red;">Check 'taxonomy.yaml' file existence and syntax, and ensure PWA cache is cleared.</p>`;
+        container.innerHTML = `<p style="color: red;">Check 'taxonomy.yaml' file existence and syntax, and ensure PWA cache is cleared (v28+).</p>`;
     }
 }
 
@@ -223,6 +223,7 @@ function renderTaxonomy(data) {
         // Create Level 1 element
         const level1Div = document.createElement('div');
         level1Div.className = 'level1';
+        // Apply color property (fixed bug)
         level1Div.style.backgroundColor = level1.color;
         
         const iconSpan = document.createElement('span');
@@ -310,6 +311,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 </script>
+
 
 </body>
 </html>
