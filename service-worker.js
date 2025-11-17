@@ -7,8 +7,8 @@ const urlsToCache = [
   '/oltaxonomi.html', // Använd absoluta sökvägar (med / i början)
   '/manifest.webmanifest',
   '/service-worker.js',
-  '/icon-192.png',
-  '/icon-512.png' 
+  '/icons/icon-192.png',
+  '/icons/icon-512.png' 
 ];
 
 // Installation: Cache:a filer

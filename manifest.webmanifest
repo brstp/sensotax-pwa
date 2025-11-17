@@ -1,19 +1,16 @@
 {
-  "name": "Öl Taxonomi",
-  "short_name": "ÖlTax",
-  "description": "Värderingsneutral sensorisk taxonomi för öl",
-  "start_url": "oltaxonomi.html",
-  "display": "standalone",
-  "background_color": "#2a6fdb",
-  "theme_color": "#2a6fdb",
+  "name": "Sensotax",
+  "short_name": "Sensotax",
+  "start_url": "./sensotax.html",
+  // ... andra inställningar
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "./ikon/icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "icon-512.png",
+      "src": "./ikon/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
