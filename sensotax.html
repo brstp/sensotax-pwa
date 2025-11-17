@@ -24,7 +24,7 @@
             margin-bottom: 10px; 
             padding: 10px; 
             border-radius: 5px; 
-            color: white; /* Ensures text is visible against colored background */
+            color: white; /* Ensures text is visible against coloured background */
         }
         .level-1-title { 
             font-weight: bold; 
@@ -43,7 +43,6 @@
         // Function to parse the YAML data using js-yaml library
         function parseYamlData(yamlText) {
             try {
-                // jsyaml.load() correctly handles the entire YAML spec, fixing the original hex code issue.
                 return jsyaml.load(yamlText);
             } catch (e) {
                 console.error("Error parsing YAML data:", e);
@@ -70,17 +69,17 @@
                 const level1Div = document.createElement('div');
                 level1Div.className = 'level-1-category';
 
-                // Check for the color key and apply the background color (Fixes the original problem)
-                if (level1.color) {
-                    level1Div.style.backgroundColor = level1.color;
+                // CRITICAL CHANGE: Using British English 'colour' key
+                if (level1.colour) {
+                    level1Div.style.backgroundColor = level1.colour;
                 } else {
-                     // This warning helps the developer verify the 'color' key in taxonomy.yaml
-                     console.warn(`Warning: No color defined for ${level1.name || 'unknown category'}`);
+                     // CRITICAL CHANGE: Using British English 'colour' key in warning
+                     console.warn(`Warning: No colour defined for ${level1.name || 'unknown category'}`);
                 }
                 
                 const title = document.createElement('div');
                 title.className = 'level-1-title';
-                title.textContent = level1.name || 'Unknown category'; // Checks for 'name' key
+                title.textContent = level1.name || 'Unknown category';
                 
                 level1Div.appendChild(title);
                 container.appendChild(level1Div);
@@ -112,7 +111,6 @@
         loadData();
 
         // --- PWA Service Worker Registration ---
-        // Register the Service Worker if supported by the browser
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 // IMPORTANT: Adjust the path if your app is not hosted under /sensotax-pwa/
