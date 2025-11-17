@@ -1,4 +1,4 @@
-const CACHE_NAME = 'oltaxonomi-cache-v40';
+const CACHE_NAME = 'oltaxonomi-cache-v41';
 const urlsToCache = [
   // ... befintliga filer ...
   './', 

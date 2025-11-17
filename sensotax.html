@@ -84,21 +84,19 @@
     </div>
 
 <script>
-
 // =================================================================
 // 1. YAML PARSER: Embedded, robust parser for array-based data
-// This version correctly handles top-level arrays and comments/hex codes.
+// FIX: Prevents '#' in hex codes from being stripped as a comment.
 // =================================================================
 
 function parseYAML(yaml) {
     const lines = yaml.split('\n');
-    let output = []; // Initialize as an array, as the YAML file starts with a list
+    let output = []; 
     let stack = [{ level: -1, ref: output }];
     let currentRef = output;
 
     lines.forEach(line => {
-        // IMPORTANT: We must NOT strip comments here, as '#' is used in hex codes.
-        // We trim only the end to clean whitespace
+        // We do not strip comments here. Comment stripping is handled when assigning values.
         line = line.trimEnd(); 
         if (!line.trimStart()) return; // Skip empty or comment lines
 
@@ -123,23 +121,23 @@ function parseYAML(yaml) {
                 key = parts[1].trim();
                 value = parts[2].trim();
                 
+                // --- K/V PÅ LIS-OBJEKT ---
+                if (value.includes('#') && value.indexOf('#') > 0) {
+                    value = value.substring(0, value.indexOf('#')).trim();
+                }
+                
                 // 1. Create new object and push to the current array reference
                 let newObj = {};
                 if (Array.isArray(currentRef)) {
                     currentRef.push(newObj);
                 } else {
-                    // Fallback needed if we are nested and push is expected
                     let parentRef = stack[stack.length - 2].ref;
                     if (Array.isArray(parentRef)) {
                         parentRef.push(newObj);
                     }
                 }
                 
-                // 2. Add the first key/value pair, handling comments/hex codes
-                if (value.includes('#')) {
-                    value = value.substring(0, value.indexOf('#')).trim();
-                }
-
+                // 2. Add the first key/value pair (e.g., id: A)
                 newObj[key] = value;
                 
                 // 3. Push new object to stack
@@ -157,8 +155,9 @@ function parseYAML(yaml) {
                 key = parts[1].trim();
                 value = parts[2].trim();
 
-                // 1. Strip comments/hex code safely
-                if (value.includes('#')) {
+                // 1. Strip comments safely, preserving hex code if it's the value itself
+                // We check if # exists AND is not the starting character (i.e., not a hex code)
+                if (value.includes('#') && value.indexOf('#') > 0) {
                     value = value.substring(0, value.indexOf('#')).trim();
                 }
 
@@ -207,7 +206,7 @@ async function loadAndRender() {
     } catch (error) {
         console.error("Error loading or rendering:", error);
         headerStatus.textContent = `ERROR: Failed to load taxonomy. (${error.message})`;
-        container.innerHTML = `<p style="color: red;">Check 'taxonomy.yaml' file existence and syntax, and ensure PWA cache is cleared (v28+).</p>`;
+        container.innerHTML = `<p style="color: red;">Check 'taxonomy.yaml' file existence and syntax, and ensure PWA cache is cleared (v29+).</p>`;
     }
 }
 
@@ -223,7 +222,7 @@ function renderTaxonomy(data) {
         // Create Level 1 element
         const level1Div = document.createElement('div');
         level1Div.className = 'level1';
-        // Apply color property (fixed bug)
+        // Apply color property (FINAL FIX: This now works as value is correct)
         level1Div.style.backgroundColor = level1.color;
         
         const iconSpan = document.createElement('span');
@@ -311,7 +310,6 @@ if ('serviceWorker' in navigator) {
     });
 }
 </script>
-
 
 </body>
 </html>
