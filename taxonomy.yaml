@@ -5,8 +5,8 @@
 - id: A
   namn: Fruktig & Ester-relaterad
   fokus: Estrar, Citrus, Bär, Tropisk frukt och Oxidationstoner.
-  color: "#FF5733" # Orange/Röd för frukt
-  icon: "🍊"
+  color: #FF5733 # Orange/Röd för frukt
+  icon: 🍊
   kategorier:
     - namn: Citrus
       termer:
@@ -65,8 +65,8 @@
 - id: B
   namn: Kryddig, Floral & Vegetal
   fokus: Fenoler, Örter, Gräsighet, Sulfider och Kryddor.
-  color: "#32CD32" # Grön för vegetala toner
-  icon: "🌿"
+  color: #32CD32 # Grön för vegetala toner
+  icon: 🌿
   kategorier:
     - namn: Kryddig
       termer:
@@ -119,8 +119,8 @@
 - id: C
   namn: Spannmål & Sötma
   fokus: Malt, Karamell, Enkel Sötma, Nötter och Diacetyl.
-  color: "#DAA520" # Gyllengul/Halmfärg
-  icon: "🍞"
+  color: #DAA520 # Gyllengul/Halmfärg
+  icon: 🍞
   kategorier:
     - namn: Basmalt & Brödig
       termer:
@@ -171,8 +171,8 @@
 - id: D
   namn: Rostad & Bränd
   fokus: Rostade malter, Kaffe, Choklad och Rökighet.
-  color: "#654321" # Mörkbrun för rostat
-  icon: "☕"
+  color: #654321 # Mörkbrun för rostat
+  icon: ☕
   kategorier:
     - namn: Kaffe & Choklad
       termer:
@@ -199,8 +199,8 @@
 - id: E
   namn: Komplex, Oorganisk och Fenolisk
   fokus: Kåda, Trä, Lösningsmedel, Infektioner och Mineraler.
-  color: "#808080" # Grå/Skogsgrön för komplexitet
-  icon: "🌲"
+  color: #808080 # Grå/Skogsgrön för komplexitet
+  icon: 🌲
   kategorier:
     - namn: Kåda & Tall
       termer:
@@ -241,8 +241,8 @@
 - id: G
   namn: Munkänsla, Textur & Eftersmak
   fokus: Taktila, termiska och grundsmaker.
-  color: "#2a6fdb" # Blå för känsla/vatten
-  icon: "💧"
+  color: #2a6fdb # Blå för känsla/vatten
+  icon: 💧
   kategorier:
     - namn: Taktil Känsla (Kropp)
       termer:
