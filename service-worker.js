@@ -1,13 +1,14 @@
-const CACHE_NAME = 'oltaxonomi-cache-v8'; 
+// ÄNDRA TILL v10 eller högre!
+const CACHE_NAME = 'oltaxonomi-cache-v10'; 
 
 const urlsToCache = [
+  // Ta bort referensen till index.html
   './', 
-  
   'sensotax.html',
   'manifest.webmanifest',
-  
-  'icon-192.png',
-  'icon-512.png'
+  // 'index.html', <--- Denna rad ska bort!
+  'ikon/icon-192.png',
+  'ikon/icon-512.png'
 ];
 
 // Installation: Cache:a filer
