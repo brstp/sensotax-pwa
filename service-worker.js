@@ -1,5 +1,5 @@
 // ÄNDRA TILL v10 eller högre!
-const CACHE_NAME = 'oltaxonomi-cache-v10'; 
+const CACHE_NAME = 'oltaxonomi-cache-v11'; 
 
 const urlsToCache = [
   // Ta bort referensen till index.html
