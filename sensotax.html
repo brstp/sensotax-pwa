@@ -70,10 +70,10 @@
             border-radius: 3px;
         }
         .level-3-terms li {
-            padding: 0; /* Tar bort LI-padding */
+            padding: 0; 
             margin: 0;
         }
-        .level-3-item { /* NY CSS: Vertikal Behållare för varje term */
+        .level-3-item { 
             padding: 5px 8px;
             margin-bottom: 3px; 
             border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
@@ -158,12 +158,7 @@
                 // 2. Level 2 Container (Categories)
                 const level2Container = document.createElement('div');
                 level2Container.className = 'level-2-container';
-                level2Container.classList.add('hidden'); 
-
-                // Requirement: Category B (ID: B) should be expanded by default
-                if (level1.id === 'B') {
-                    level2Container.classList.remove('hidden');
-                }
+                // NYTT: Klassen 'hidden' har tagits bort. Level 2 är nu synlig som standard.
 
                 if (level1.categories && Array.isArray(level1.categories)) {
                     level1.categories.forEach(level2 => {
@@ -180,13 +175,12 @@
                         // 4. Level 3 Terms (Hidden list)
                         const termsList = document.createElement('ul');
                         termsList.className = 'level-3-terms';
-                        termsList.classList.add('hidden'); 
+                        termsList.classList.add('hidden'); // Level 3 förblir dold som standard
 
                         if (level2.terms && Array.isArray(level2.terms)) {
                             level2.terms.forEach(term => {
                                 const listItem = document.createElement('li');
                                 
-                                // NYTT: Skapar en block-behållare för vertikal layout och framtida innehåll
                                 const termItem = document.createElement('div');
                                 termItem.className = 'level-3-item';
                                 termItem.textContent = term;
