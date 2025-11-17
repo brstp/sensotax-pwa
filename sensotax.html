@@ -90,8 +90,7 @@
 
 function parseYAML(yaml) {
     const lines = yaml.split('\n');
-    let output = {};
-    let stack = [];
+    let output = []; // <-- Initialisera som en ARRAY, då YAML-filen börjar med en lista    let stack = [];
     let currentObject = output;
 
     lines.forEach(line => {

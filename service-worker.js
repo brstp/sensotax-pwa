@@ -1,5 +1,5 @@
 // Öka CACHE_NAME till v17 eller högre!
-const CACHE_NAME = 'oltaxonomi-cache-v25';
+const CACHE_NAME = 'oltaxonomi-cache-v26';
 const urlsToCache = [
   // ... befintliga filer ...
   './', 
