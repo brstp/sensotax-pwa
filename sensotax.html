@@ -225,7 +225,7 @@ function generateTaxonomy() {
 // Service Worker-registrering (Endast om du hostar den)
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sensotax-pwa/service-worker.js')
+        navigator.serviceWorker.register('./service-worker.js')
     });
 }
 
