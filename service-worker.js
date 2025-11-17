@@ -1,17 +1,18 @@
 // ÄNDRA DETTA VÄRDE VID VARJE UPPDATERING AV TAXONOMIN!
-// T.ex. 'oltaxonomi-cache-v2', 'oltaxonomi-cache-v3'
-const CACHE_NAME = 'oltaxonomi-cache-v2'; // Kom ihåg att bumpa detta!
+// Vi höjer versionen här, t.ex. till v3.
+const CACHE_NAME = 'oltaxonomi-cache-v3'; 
+
 const urlsToCache = [
-  // Alla sökvägar måste vara absoluta från roten av GitHub Pages-sidan
-  '/sensotax-pwa/', 
+  // Roten tas bort. Vi cache:ar endast faktiska filer:
   '/sensotax-pwa/sensotax.html',
   '/sensotax-pwa/manifest.webmanifest',
   '/sensotax-pwa/service-worker.js',
+  '/sensotax-pwa/index.html', // index.html är viktigt för omdirigeringen
   '/sensotax-pwa/ikon/icon-192.png', 
-  '/sensotax-pwa/ikon/icon-512.png',
-  '/sensotax-pwa/index.html' // Lägg till även index.html
+  '/sensotax-pwa/ikon/icon-512.png'
 ];
 
+// ... resten av koden för install, activate och fetch är bra
 // Installation: Cache:a filer
 self.addEventListener('install', event => {
   event.waitUntil(
