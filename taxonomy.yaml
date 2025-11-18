@@ -1,6 +1,5 @@
 - id: A
   name: Fruktig
-  #focus: Estrar, Citrus, Bär, Tropisk frukt och Oxidationstoner.
   colour: "#FF5733" 
   icon: 🍊
   categories:
@@ -44,6 +43,7 @@
         - Vattenmelon
         - Honungsmelon
         - Cantaloupe-melon
+        - Tropisk juice
     - name: Bär
       terms:
         - Svarta vinbär
@@ -53,7 +53,7 @@
         - Jordgubbe
         - Röda vinbär
         - Krusbär
-    - name: Torkad & Mörk Frukt
+    - name: Torkad frukt
       terms:
         - Russin
         - Dadlar
@@ -61,13 +61,11 @@
         - Torkad frukt
     - name: Åldring & Oxidationstoner
       terms:
-        - Sherry/Vinös
         - Oxidativ
-        - Kartong/Våt papp
+        - Kartong/våt papp
         #- Grön
 - id: B
   name: Kryddig, blommig & grönsaker
-  #focus: Fenoler, Örter, Gräsighet, Sulfider och Kryddor.
   colour: "#32CD32" 
   icon: 🌿
   categories:
@@ -104,6 +102,7 @@
         - Grön te
         - Svart te
         - Mejram
+        - Humle, ädel
     - name: Grönsaker & grönt
       terms:
         - Gräsig
@@ -124,7 +123,6 @@
         - Catty
 - id: C
   name: Spannmål & sötma
-  #focus: Malt, Karamell, Enkel Sötma, Nötter och Diacetyl.
   colour: "#DAA520" 
   icon: 🍞
   categories:
@@ -185,7 +183,6 @@
         - Härsket
 - id: D
   name: Rostad & bränt
-  #focus: Rostade malter, Kaffe, Choklad och Rökighet.
   colour: "#654321"
   icon: ☕
   categories:
@@ -215,9 +212,9 @@
         - Rökt skinka
         - Rökt medwurst
         - Rökelse
+        - Tändsticksrök
 - id: E
-  name: Trä, jord, rengöringsmedel, lösningsmedel
-  #focus: Kåda, Trä, Lösningsmedel, Infektioner och Mineraler.
+  name: Trä, jord, alkohol, rengöring, lösningsmedel
   colour: "#808080"
   icon: 🌲
   categories:
@@ -236,12 +233,15 @@
         - Svamp
         #- Doff
         - Jordkällare
-    - name: Sprit
+    - name: Sprit & vin
       terms:
         - Konjak
         - Spritig
         - Whisky
         - Bourbon
+        - Vinös
+        - Sherry
+        - Madeira
         - Alkoholvärmande
     - name: Lösningsmedel & petroleum
       terms:
@@ -268,40 +268,12 @@
         - Mineralisk
         - Salt
         - Blodig
-        - Kemisk
-        #- Tändsticka/Rök
+        #- Kemisk
 - id: G
-  name: Munkänsla
-  #focus: Taktila, termiska och grundsmaker.
+  name: Xxxx
   colour: "#2a6fdb" 
   icon: 💧
   categories:
-    - name: Kropp & taktil känsla
+    - name: Yyy
       terms:
-        - Fyllig/Tät
-        - Medium fyllighet
-        - Lätt/Vattnig
-        - Silkeslen/Mjuk
-        - Oljig/Fet
-        - Sträv
-    - name: Kolsyra
-      terms:
-        - Kraftig
-        - Låg, platt
-        - Mjuk/Pärlande
-    - name: Värme & kyla
-      terms:
-        - Kylande
-        - Värmande
-        - Stickande
-    - name: Grundsmaker
-      terms:
-        - Besk
-        - Söt
-        - Salt
-    - name: Eftersmak
-      terms:
-        - Kvardröjande
-        - Ren/Kort
-        - Klibbig/Seg
-        - Beläggande
+        - Zzzz
