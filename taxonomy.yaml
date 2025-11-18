@@ -89,7 +89,7 @@
 
 - id: B
   name: Maltig och spannmål
-  colour: "#DAA520"
+  colour: "#B8860B"
   icon: 🍞
   categories:
     - name: Spannmål
@@ -278,7 +278,7 @@
 
 - id: F
   name: Rök
-  colour: "#A9A9A9"
+  colour: "#696969"
   icon: ♨️
   categories:
     - name: Rökaromer
@@ -326,7 +326,7 @@
 
 - id: H
   name: Jord och mineral
-  colour: "#808080"
+  colour: "#5A5A5A"
   icon: ⛰️
   categories:
     - name: Jordig
@@ -371,7 +371,7 @@
 
 - id: J
   name: Alkohol och lösningsmedel
-  colour: "#FFA07A"
+  colour: "#FF7F50"
   icon: 🍷
   categories:
     - name: Vinös och sprit
@@ -419,7 +419,7 @@
 
 - id: L
   name: Smörig (Diacetyl)
-  colour: "#FFFF33"
+  colour: "#C49500"
   icon: 🧈
   categories:
     - name: Smör och fet
@@ -438,7 +438,7 @@
 
 - id: M
   name: Svavel och reduktiv
-  colour: "#FFFF00"
+  colour: "#B3B300"
   icon: 🥚
   categories:
     - name: Svavel
@@ -567,7 +567,7 @@
 
 - id: Q
   name: Utseende
-  colour: "#D3D3D3"
+  colour: "#A9A9A9"
   icon: 👁️
   categories:
     - name: Klarhet och grumlighet
