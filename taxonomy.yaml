@@ -1,6 +1,6 @@
 - id: A
-  name: Fruktig & Ester-relaterad
-  focus: Estrar, Citrus, Bär, Tropisk frukt och Oxidationstoner.
+  name: Fruktig
+  #focus: Estrar, Citrus, Bär, Tropisk frukt och Oxidationstoner.
   colour: "#FF5733" 
   icon: 🍊
   categories:
@@ -12,21 +12,27 @@
         - Lime
         - Mandarin
         - Bergamott
-        - Pompelmus
+        #- Pompelmus
         - Citronskal
-    - name: Stenfrukt & Kärnfrukt
+    - name: Stenfrukt
       terms:
         - Persika
         - Aprikos
         - Plommon
         - Nektarin
         - Körsbär
-        - Äpple
-        - Päron
-        - Banan
-        - Rosé
-    - name: Tropisk & Exotisk Frukt
+    - name: Kärnfrukt
       terms:
+        - Äpple, gröna
+        - Äpple, röda
+        - Äpple, omogna
+        - Päron
+        - Kvitten
+        - Nypon
+        #- Rabarber
+    - name: Tropisk frukt
+      terms:
+        - Banan
         - Mango
         - Passionsfrukt
         - Ananas
@@ -34,11 +40,11 @@
         - Papaya
         - Litchi
         - Kiwi
-        - Kokosnöt
+        - Kokos, kokosnöt
         - Vattenmelon
         - Honungsmelon
         - Cantaloupe-melon
-    - name: Bär & Vinbär
+    - name: Bär
       terms:
         - Svarta vinbär
         - Blåbär
@@ -50,40 +56,44 @@
     - name: Torkad & Mörk Frukt
       terms:
         - Russin
+        - Dadlar
+        - Fikon, torkad
         - Torkad frukt
     - name: Åldring & Oxidationstoner
       terms:
         - Sherry/Vinös
         - Oxidativ
         - Kartong/Våt papp
-        - Grön
-
+        #- Grön
 - id: B
-  name: Kryddig, Floral & Vegetal
-  focus: Fenoler, Örter, Gräsighet, Sulfider och Kryddor.
+  name: Kryddig, blommig & grönsaker
+  #focus: Fenoler, Örter, Gräsighet, Sulfider och Kryddor.
   colour: "#32CD32" 
   icon: 🌿
   categories:
     - name: Kryddig
       terms:
         - Peppar
+        - Vitpeppar
+        - Svartpeppar
+        - Kryddpeppar
         - Kryddnejlika
         - Anis
         - Muskot
         - Ingefära
         - Lakrits
         - Enbär
-    - name: Floral/Blommig
+    - name: Blommig
       terms:
         - Ros
         - Geranium
         - Syren
         - Jasmin
-        - Fläder
+        - Fläderblom
         - Kamomill
         - Lavendel
         - Apelsinblom
-    - name: Örtig/Aromatisk
+    - name: Örtig
       terms:
         - Dill
         - Timjan
@@ -94,10 +104,10 @@
         - Grön te
         - Svart te
         - Mejram
-    - name: Grön & Vegetal
+    - name: Grönsaker & grönt
       terms:
         - Gräsig
-        - Nyklippt gräs
+        - Gräsklipp
         - Lök
         - Vitlök
         - Selleri
@@ -105,30 +115,33 @@
         - Gurka
         - DMS
         - Kokt kål
-        - Majs
+        - Majskonserv
+        - Majs, kokt
     - name: Ofräsch Vegetal
       terms:
         - Ruttet ägg
         - Skunkig
         - Catty
-
 - id: C
-  name: Spannmål & Sötma
-  focus: Malt, Karamell, Enkel Sötma, Nötter och Diacetyl.
+  name: Spannmål & sötma
+  #focus: Malt, Karamell, Enkel Sötma, Nötter och Diacetyl.
   colour: "#DAA520" 
   icon: 🍞
   categories:
-    - name: Basmalt & Brödig
+    - name: Bröd & malt
       terms:
         - Maltig
         - Korn
         - Brödig
         - Degig
         - Cracker
+        - Formfranska
+        - Sockerkaka
+        - Rågbröd
         - Varm
-        - Kaka/Kex
+        - Kex
         - Brödskorpa
-    - name: Karamell & Sirap
+    - name: Karamell & sirap
       terms:
         - Karamell
         - Kola
@@ -140,17 +153,24 @@
         - Fudge
         - Bränt socker
         - Karamelliserad lök
-    - name: Enkel Sötma & Nöt
+    - name: Sötma
       terms:
-        - Lätt sötma
+        - Sötma
+        - Maltsätma
+        - Alkoholsötma
         - Honung
         - Socker
         - Vanilj
-        - Mandel/Marsipan
+    - name: Nötig
+      terms:
+        - Mandel
+        - Marsipan
+        - Mandelmassaa
+        - Bittermandel
         - Hasselnöt
         - Valnöt
         - Jordnöt
-        - Oljig
+        #- Oljig
     - name: Torr & Rå
       terms:
         - Torr
@@ -160,87 +180,103 @@
         - Mjölig
     - name: Smörig
       terms:
-        - Smörig
+        - Smör
         - Popcorn
-        - Härskt/Smörigt
-
+        - Härsket
 - id: D
-  name: Rostad & Bränd
-  focus: Rostade malter, Kaffe, Choklad och Rökighet.
+  name: Rostad & bränt
+  #focus: Rostade malter, Kaffe, Choklad och Rökighet.
   colour: "#654321"
   icon: ☕
   categories:
     - name: Kaffe & Choklad
       terms:
         - Kaffe
+        - Kaffe, nymalt
         - Espresso
         - Choklad
         - Mörk choklad
         - Mjölkchoklad
         - Kakao
         - Nygjord kaffe
-    - name: Bränd & Sotig
+    - name: Bränt
       terms:
         - Bränd
+        - Bränt bröd
         - Sotig
         - Bitter Choklad
-        - Bränd sockervadd
+        - Bränt socker
+        #- Bränd sockervadd
     - name: Rökig
       terms:
-        - Röksmak
-        - Torvig
+        - Rökig
+        - Torvrök
         - Lätt Rök
-        - Skinka/Bacon
-
+        - Rökt skinka
+        - Rökt medwurst
+        - Rökelse
 - id: E
-  name: Komplex, Oorganisk och Fenolisk
-  focus: Kåda, Trä, Lösningsmedel, Infektioner och Mineraler.
+  name: Trä, jord, rengöringsmedel, lösningsmedel
+  #focus: Kåda, Trä, Lösningsmedel, Infektioner och Mineraler.
   colour: "#808080"
   icon: 🌲
   categories:
-    - name: Kåda & Tall
+    - name: Träd och trä
       terms:
-        - Kådig
+        - Kåda
         - Tall
-        - Cederträ
-    - name: Jordig
-      terms:
-        - Jordig
-        - Mossa/Svamp
-        - Doff
-        - Smutsig/Jordkällare
-    - name: Trä & Alkohol
-      terms:
+        - Ceder
         - Träig
         - Tobak
         - Läder
-        - Rökelse
-        - Kognak/Barrique
-        - Värmande/Spritig
+    - name: Jordig
+      terms:
+        - Jordig
+        - Mossa
+        - Svamp
+        #- Doff
+        - Jordkällare
+    - name: Sprit
+      terms:
+        - Konjak
+        - Spritig
+        - Whisky
+        - Bourbon
+        - Alkoholvärmande
+    - name: Lösningsmedel & petroleum
+      terms:
         - Lösningsmedel
-        - Plåster/Medicinsk
-        - Fenolisk
+        - Aceton
+        - Diesel
+        - Bensin
+        - Thinner
+    - name: Fenolisk
+      terms:
+        - Plåster
+        - Fenolisk/rengöringsmedel
+        - Klorfenol
     - name: Infektion & Syra
       terms:
-        - Vinäger/Sur
-        - Sur/Mjölksyra
+        - Vinäger
+        - Mjölksyra
         - Hästtäcke/Stall
         - Ostig
-        - Klor/Klorfenol
-    - name: Mineral & Oorganisk
+        #- Klor
+    - name: Mineral & metall
       terms:
         - Metallisk
+        - Mineralisk
+        - Salt
         - Blodig
         - Kemisk
-        - Tändsticka/Rök
-
+        #- Tändsticka/Rök
 - id: G
-  name: Munkänsla, Textur & Eftersmak
-  focus: Taktila, termiska och grundsmaker.
+  name: Munkänsla
+  #focus: Taktila, termiska och grundsmaker.
   colour: "#2a6fdb" 
   icon: 💧
   categories:
-    - name: Taktil Känsla (Kropp)
+    - name: Kropp & taktil känsla
       terms:
         - Fyllig/Tät
         - Medium fyllighet
@@ -248,16 +284,15 @@
         - Silkeslen/Mjuk
         - Oljig/Fet
         - Sträv
-    - name: Kolsyra & Skum
+    - name: Kolsyra
       terms:
-        - Kraftig/Högt kolsyrad
-        - Låg/Platt
+        - Kraftig
+        - Låg, platt
         - Mjuk/Pärlande
-        - Skummig/Mousserande
-        - Tunn/Försvinnande skum
-    - name: Termisk & Alkohol
+    - name: Värme & kyla
       terms:
         - Kylande
+        - Värmande
         - Stickande
     - name: Grundsmaker
       terms:
